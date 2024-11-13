@@ -26,7 +26,7 @@ const BeatCards: React.FC<BeatCardsProps> = ({ beats, className, limit }) => {
     <div
       className={twMerge(
         `
-        grid
+            grid
             grid-cols-2
             sm:grid-cols-3
             md:grid-cols-3

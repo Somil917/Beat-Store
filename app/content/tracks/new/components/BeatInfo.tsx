@@ -3,17 +3,23 @@
 import Input from "@/components/Input";
 import { useFormContext } from "@/providers/FormProvider";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { ChangeEvent, useEffect, useState } from "react"; // Import required styles
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
-import { IoIosClose, IoMdClose } from "react-icons/io";
-import { IoCloseCircleSharp } from "react-icons/io5";
 import NavigateRoutes from "./NavigateRoutes";
+import useTrackDetailsUpload from "@/hooks/useTrackDetailsUpload";
+import TrackDetailsUploadModal from "@/components/TrackDetailsUploadModal";
+import { useDraftStore } from "@/hooks/useDraftStore";
+import { ClipLoader } from "react-spinners";
+import { IoInformationCircleOutline } from "react-icons/io5";
+import { IoIosArrowDown } from "react-icons/io";
 
 const BeatInfo = () => {
   const { formData, updateFormData } = useFormContext();
   const router = useRouter();
+  const trackDetailsUploadModal = useTrackDetailsUpload();
+  const { coverArt, isCoverFetching, isCoverLoading, setIsCoverLoading } =
+    useDraftStore();
 
   // console.log(formData);
 
@@ -22,29 +28,59 @@ const BeatInfo = () => {
 
   const [isMounted, setIsMounted] = useState(false);
 
+  const keys = [
+    "A♭m",
+    "A♭M",
+    "Am",
+    "AM",
+    "A♯m",
+    "A♯M",
+    "B♭m",
+    "B♭M",
+    "Bm",
+    "BM",
+    "Cm",
+    "CM",
+    "C♯m",
+    "C♯M",
+    "D♭m",
+    "D♭M",
+    "Dm",
+    "DM",
+    "D♯m",
+    "D♯M",
+    "E♭m",
+    "E♭M",
+    "Em",
+    "EM",
+    "Fm",
+    "FM",
+    "F♯m",
+    "F♯M",
+    "G♭m",
+    "G♭M",
+    "Gm",
+    "GM",
+    "G♯m",
+    "G♯M",
+    "None",
+  ];
+
   useEffect(() => {
     setIsMounted(true);
-  }, []);
+    if (coverArt) {
+      setIsCoverLoading(true);
+    }
 
-  // Save formData to localStorage whenever it changes
-  // useEffect(() => {
-  //   if (formData.beatinfo) {
-  //     localStorage.setItem("beatinfo", JSON.stringify(formData.beatinfo));
-  //     console.log("Data saved to localStorage:", formData.beatinfo);
-  //   }
-  // }, [formData.beatinfo]);
+    return () => setIsCoverLoading(false);
+  }, [coverArt, setIsCoverLoading]);
 
-  // useEffect(() => {
-  //   const storedBeatInfo = localStorage.getItem("beatinfo");
-  //   if (storedBeatInfo) {
-  //     const parsedBeatInfo = JSON.parse(storedBeatInfo);
-  //     if (
-  //       JSON.stringify(parsedBeatInfo) !== JSON.stringify(formData.beatinfo)
-  //     ) {
-  //       updateFormData("beatinfo", parsedBeatInfo);
-  //     }
-  //   }
-  // }, [updateFormData, formData.beatinfo]);
+  const handleOpenTrackDetailsModal = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    e.preventDefault();
+    trackDetailsUploadModal.onOpen();
+  };
 
   const handleCoverArtChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -52,6 +88,12 @@ const BeatInfo = () => {
 
       updateFormData("beatinfo", { ...formData.beatinfo, coverArt: file });
     }
+  };
+
+  //get the select value in key variable
+  const handleKeyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newKey = e.target.value;
+    updateFormData("beatinfo", { ...formData.beatinfo, key: newKey });
   };
 
   //get the input value in tag variable
@@ -63,9 +105,11 @@ const BeatInfo = () => {
   const handleEnterPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && tagInput.trim() !== "") {
       e.preventDefault(); //prevent from default form submission
-      const newTags = [...formData.beatinfo.tags, tagInput.trim()];
+      if (formData.beatinfo.tags.length < 3) {
+        const newTags = [...formData.beatinfo.tags, tagInput.trim()];
 
-      updateFormData("beatinfo", { ...formData.beatinfo, tags: newTags });
+        updateFormData("beatinfo", { ...formData.beatinfo, tags: newTags });
+      }
 
       setTagInput("");
     }
@@ -88,7 +132,10 @@ const BeatInfo = () => {
 
       const newGenre = genreInput.trim().toLowerCase();
 
-      if (!formData.beatinfo.genres.includes(newGenre)) {
+      if (
+        !formData.beatinfo.genres.includes(newGenre) &&
+        formData.beatinfo.genres.length < 3
+      ) {
         const newGenres = [...formData.beatinfo.genres, newGenre];
         updateFormData("beatinfo", { ...formData.beatinfo, genres: newGenres });
       }
@@ -96,8 +143,7 @@ const BeatInfo = () => {
       setGenreInput("");
     }
   };
-
-  console.log(formData.beatinfo);
+  // console.log(formData.beatinfo);
 
   //remove genre
   const handleRemoveGenre = (genre: string) => {
@@ -117,36 +163,46 @@ const BeatInfo = () => {
 
   return (
     <div className=" bg-[#141414] px-8 py-5 w-[50%] rounded-md border border-neutral-700/50">
-      <div className="flex w-full flex-col gap-y-6 h-full">
+      <div className="flex  w-full flex-col gap-y-6 h-full">
         <NavigateRoutes />
         <form className="w-full flex justify-center items-start gap-x-8">
-          <div className="">
+          <div>
             <div className="overflow-hidden flex justify-center items-center relative border border-neutral-700/50 h-[200px] w-[200px] bg-neutral-700 rounded-md">
-              <Image
-                fill
-                alt="cover-art"
-                className="object-cover"
-                src={
-                  formData.beatinfo.coverArt instanceof File
-                    ? URL.createObjectURL(formData.beatinfo.coverArt)
-                    : "/images/partynextdoor.jpeg"
-                }
-              />
+              {isCoverFetching ? (
+                <div className=" h-[200px] w-[200px] flex justify-center items-center">
+                  <ClipLoader size={50} color={"#3498db"} loading={true} />
+                </div>
+              ) : coverArt ? (
+                <Image
+                  fill
+                  alt="cover-art"
+                  sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="object-cover"
+                  src={coverArt}
+                />
+              ) : (
+                <Image
+                  fill
+                  className="object-cover"
+                  src="/images/partynextdoor.jpeg"
+                  sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  alt="default"
+                />
+              )}
             </div>
-            <div className="text-center mt-6">
-              <Input
-                onChange={handleCoverArtChange}
-                id="cover-art"
-                accept="image/*"
-                type="file"
-                className="sr-only hidden"
-              />
-              <label
-                htmlFor="cover-art"
-                className="w-full h-full px-4 py-2 text-blue-500 bg-blue-800/20 font-medium cursor-pointer"
+            <div className="text-center mt-5">
+              <button
+                onClick={handleOpenTrackDetailsModal}
+                className=" px-4 py-2 text-blue-500 hover:bg-blue-800/40 active:outline active:outline-[6px] active:outline-blue-800/40 active:bg-blue-700 active:text-black bg-blue-800/20 font-medium rounded-full cursor-pointer"
               >
-                Upload Cover Art
-              </label>
+                Upload CoverArt
+              </button>
+              <TrackDetailsUploadModal
+                title="Upload Coverart"
+                description=".jpeg, .jpg or .png"
+                name="cover"
+                accept=".jpeg, .jpg, .png"
+              />
             </div>
           </div>
           <div className="w-full flex flex-col gap-y-6">
@@ -157,24 +213,53 @@ const BeatInfo = () => {
                 id="title"
                 name="title"
                 onChange={handleTextChange}
-                value={isMounted ? formData.beatinfo.title || "" : ""}
+                value={isMounted ? formData.beatinfo.title || "New Track" : ""}
               />
             </div>
             <div className="w-full flex justify-between gap-x-4 items-center">
-              <div className="w-full">
-                <div className="text-base mb-2 font-md">Key</div>
-                <Input
-                  placeholder="Key (for ex. C#m)"
-                  id="key"
-                  name="key"
-                  onChange={handleTextChange}
-                  value={isMounted ? formData.beatinfo.key || "" : ""}
-                />
+              <div className="w-full ">
+                <div className=" text-base mb-2 font-md">Key</div>
+                <div className="relative">
+                  <select
+                    onChange={handleKeyChange}
+                    value={isMounted ? formData.beatinfo.key || "" : ""}
+                    name="key"
+                    id="key"
+                    className="
+                    appearance-none
+                    w-full 
+                    bg-transparent
+                    custom-shadow
+                    border
+                    border-neutral-700/80
+                    rounded-md
+                    px-3
+                    py-3
+                    text-sm
+                    focus:outline-none
+                    focus:border-blue-600
+                    transition
+                    "
+                  >
+                    <option value="" disabled hidden>
+                      Select
+                    </option>
+                    {keys.map((key) => (
+                      <option className="bg-[#141414]" value={key} key={key}>
+                        {key}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                    <IoIosArrowDown size={17} />
+                  </div>
+                </div>
               </div>
               <div className="w-full">
                 <div className="text-base mb-2 font-md">BPM</div>
                 <Input
                   type="number"
+                  className="appearance-none"
                   placeholder="BPM (for ex. 120)"
                   min="0"
                   max="300"
@@ -194,9 +279,9 @@ const BeatInfo = () => {
                     h-[150px]
                     resize-none 
                     rounded-md
-                    bg-neutral-700
+                    bg-transparent
                     border
-                    border-transparent
+                    border-neutral-700/80
                     px-3
                     py-3
                     text-sm
@@ -208,6 +293,8 @@ const BeatInfo = () => {
                     disabled:cursor-not-allowed
                     disabled:opacity-50
                     focus:outline-none
+                    focus:border-blue-600
+                    transition
                   "
                 placeholder="Write the beat description"
                 id="description"
@@ -227,6 +314,10 @@ const BeatInfo = () => {
                 name="tags"
                 value={isMounted ? tagInput : ""}
               />
+              <div className="text-[13px] flex items-center gap-x-[2px] text-neutral-500 mt-1">
+                <IoInformationCircleOutline className="inline-block" /> You can
+                add up to 3 tags
+              </div>
               <div className="mt-2 flex flex-wrap gap-2">
                 {isMounted ? (
                   formData.beatinfo.tags.map((tag: string, index: number) => (
@@ -259,6 +350,10 @@ const BeatInfo = () => {
                 name="genre"
                 value={isMounted ? genreInput : ""}
               />
+              <div className="text-[13px] flex items-center gap-x-[2px] text-neutral-500 mt-1">
+                <IoInformationCircleOutline className="inline-block" /> You can
+                add up to 3 Genres
+              </div>
               <div className="mt-2 flex flex-wrap gap-2">
                 {isMounted ? (
                   formData.beatinfo.genres.map(
@@ -284,12 +379,12 @@ const BeatInfo = () => {
             </div>
           </div>
         </form>
-        <div className="flex justify-end mt-2 ">
+        <div className="flex justify-end my-2 pt-6 border-t border-neutral-700/50 ">
           <button
             onClick={() => {
               router.replace("files");
             }}
-            className="px-4 py-1 rounded-md border border-neutral-700/50 mr-4 bg-neutral-800"
+            className="px-4 hover:bg-neutral-700 active:outline active:outline-[6px] active:outline-neutral-800 py-1 rounded-md border border-neutral-700/50 mr-4 bg-neutral-800"
           >
             Back
           </button>
@@ -297,7 +392,7 @@ const BeatInfo = () => {
             onClick={() => {
               router.replace("review");
             }}
-            className="px-4 py-1 rounded-md border border-neutral-700/50 bg-neutral-800"
+            className="px-4 hover:bg-neutral-700 active:outline active:outline-[6px] active:outline-neutral-800 py-1 rounded-md border border-neutral-700/50 bg-neutral-800"
           >
             Next
           </button>

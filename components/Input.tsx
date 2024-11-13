@@ -17,12 +17,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
                     flex
                     w-full
                     rounded-md
-                    bg-neutral-700
+                    custom-shadow
+                    bg-transparent
                     border
-                    border-transparent
+                    border-neutral-700/80
                     px-3
                     py-3
                     text-sm
+                    transition
                     file:border-0
                     file:bg-transparent
                     file:text-sm
@@ -31,6 +33,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
                     disabled:cursor-not-allowed
                     disabled:opacity-50
                     focus:outline-none
+                    focus:border-blue-600
                 `,
                 className
             )}

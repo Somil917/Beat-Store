@@ -1,10 +1,6 @@
 import { usePathname, useRouter } from "next/navigation";
 import React, { useMemo } from "react";
 
-// interface NavigateRoutesProps {
-//     children: React.ReactNode;
-// }
-
 const NavigateRoutes = () => {
   const router = useRouter();
 

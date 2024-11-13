@@ -48,6 +48,15 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
 
   const uploadModal = useUploadModal();
 
+  const hideContentOnRoutes = [
+    "/content/tracks/new/info",
+    "/content/tracks/new/files",
+    "/content/tracks/new/review",
+    "/content/tracks/uploaded",
+  ];
+
+  const shouldNotShow = hideContentOnRoutes.includes(pathname);
+
   // handel upload
   const onClick = () => {
     if (!user) {
@@ -56,26 +65,6 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
 
     return uploadModal.onOpen();
   };
-
-  // const onLikeClick = () => {
-  //   router.push('/liked');
-  // };
-  // const routes = useMemo(
-  //   () => [
-  //     {
-  //       label: "WAVESELL",
-  //       active: pathname !== "/search",
-  //       href: "/",
-  //     },
-  //     {
-  //       icon: BiSearch,
-  //       label: "Search",
-  //       active: pathname === "/search",
-  //       href: "/search",
-  //     },
-  //   ],
-  //   [pathname]
-  // );
 
   const toggleCard = () => {
     setIsCard(!isCard);
@@ -95,34 +84,42 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
 
   useEffect(() => {
     setIsProfileCard(false);
-    setIsCard(false)
-    
-  }, [pathname])
+    setIsCard(false);
+  }, [pathname]);
 
   return (
-    <div className="flex w-full fixed top-0 left-0 z-10 border-b border-neutral-700/50">
+    <div className="flex w-full h-[65px] fixed top-0 left-0 z-10 border-b border-neutral-700/50">
       <div
-        className="
+        className={`
                 flex
                 flex-row
                 items-center
                 justify-between
-                px-28
+                ${shouldNotShow ? "px-5" : "px-28"}
                 bg-[#141414]
                 w-full
                 py-3
-            "
+        `}
       >
         <div>
-          <Link
+          {!shouldNotShow ? (
+            <Link
             href="/"
             className="font-bold text-2xl text-white cursor-pointer"
           >
             WAVESELL
           </Link>
+          ) : (
+            <div
+            className="font-bold text-2xl text-white"
+          >
+            STUDIO
+          </div>
+          )}
         </div>
-        <div
-          className="
+        {!shouldNotShow && (
+          <div
+            className="
                     flex
                     items-center
                     gap-1.5
@@ -134,24 +131,27 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
                     border-black
                     rounded-[4px]
                 "
-        >
-          <FiSearch className="text-neutral-400" />
-          <SearchBox
-            placeholder="Search for Genres, Artists etc."
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-          />
-        </div>
+          >
+            <FiSearch className="text-neutral-400" />
+            <SearchBox
+              placeholder="Search for Genres, Artists etc."
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+          </div>
+        )}
         {user ? (
           <>
             <div className="flex justify-between items-center text-sm gap-3 text-neutral-400 font-medium">
-              <button
-                onClick={onClick}
-                className="rounded-sm mr-5 font-bold px-3 py-1 text-gray-700 hover:text-gray-950 bg-slate-200 transition hover:bg-slate-100"
-              >
-                Start Selling
-              </button>
+              {!shouldNotShow && (
+                <button
+                  onClick={onClick}
+                  className="rounded-sm mr-5 font-bold px-3 py-1 text-gray-700 hover:text-gray-950 bg-slate-200 transition hover:bg-slate-100"
+                >
+                  Start Selling
+                </button>
+              )}
               <button
                 className="flex  justify-center items-center cursor-pointer gap-1 hover:bg-neutral-400/10 p-2 rounded-full"
                 onClick={toggleProfileCard}
@@ -160,26 +160,34 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
                 <IoIosArrowDown />
               </button>
               {isProfileCard && (
-                <Card className="right-[320px] w-[180px]">
+                <Card
+                  className={`${
+                    !shouldNotShow ? "right-[320px]" : "right-[90px]"
+                  } w-[180px]`}
+                >
                   <ProfileCardItems />
                 </Card>
               )}
-              <button
-                className="flex justify-center items-center gap-1 hover:bg-neutral-400/10 p-2 rounded-full cursor-pointer"
-                onClick={toggleCard}
-              >
-                <LuHeart size={22} />
-                <IoIosArrowDown />
-              </button>
+              {!shouldNotShow && (
+                <button
+                  className="flex justify-center items-center gap-1 hover:bg-neutral-400/10 p-2 rounded-full cursor-pointer"
+                  onClick={toggleCard}
+                >
+                  <LuHeart size={22} />
+                  <IoIosArrowDown />
+                </button>
+              )}
               {isCard && (
                 <Card className="right-[250px]">
                   <LikeCardItems beats={beats} />
                 </Card>
               )}
-              <button className="flex justify-center items-center gap-1 hover:bg-neutral-400/10 p-2 rounded-full cursor-pointer">
-                <HiOutlineShoppingBag size={22} />
-                <IoIosArrowDown />
-              </button>
+              {!shouldNotShow && (
+                <button className="flex justify-center items-center gap-1 hover:bg-neutral-400/10 p-2 rounded-full cursor-pointer">
+                  <HiOutlineShoppingBag size={22} />
+                  <IoIosArrowDown />
+                </button>
+              )}
               <button className="flex  justify-center items-center gap-1 hover:bg-neutral-400/10 p-2 rounded-full cursor-pointer">
                 <RiNotification3Line size={21} />
                 <IoIosArrowDown />

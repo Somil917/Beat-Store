@@ -14,7 +14,6 @@ interface BeatInfo {
     description: string;
     tags: string[];
     genres: string[]; 
-    coverArt: File | null
 }
 
 interface Files {
@@ -40,13 +39,12 @@ const defaultFormData:  FormData = {
         zip: null,
     },
     beatinfo: {
-        title: "",
+        title: "New Track",
         key: "",
         bpm: null,
         description: "",
         tags: [],
         genres: [],
-        coverArt: null,
     },
     metadata: {},
     pricing: {},

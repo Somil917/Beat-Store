@@ -9,3 +9,48 @@ body,
   color-scheme: dark;
   background-color: #1e1e1d;
 }
+
+.custom-shadow {
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75);
+}
+
+/* Remove arrows for number inputs in most browsers */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+.scrollbar-no-arrows::-webkit-scrollbar {
+  width: 7px;
+  height: 8px;
+}
+
+.scrollbar-no-arrows::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-no-arrows::-webkit-scrollbar-thumb {
+  background-color: #525252;
+  border-radius: 10px;
+}
+
+.scrollbar-no-arrows::-webkit-scrollbar-button {
+  display: none; 
+}
+
+.circular-border{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 1px solid rgb(64 64 64 / 0.7);
+  border-radius: 50%;
+  z-index: 1;
+}

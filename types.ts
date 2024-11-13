@@ -24,6 +24,17 @@ export interface Beat {
   bpm: number;
 }
 
+export interface Draft {
+  id: string;
+  user_id: string;
+  metadata: any;
+  created_at: string;
+  cover_art_url: string;
+  audio_file_url: string;
+  is_published: boolean;
+  is_saved: boolean;
+}
+
 export interface Product {
   id: string;
   acrive?: boolean;

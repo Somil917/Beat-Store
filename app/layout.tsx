@@ -16,6 +16,7 @@ import getLikedBeats from "@/actions/getLikedBeats";
 import { useRouter } from "next/router";
 import NavBarWrapper from "@/components/NavbarWrapper";
 import { FormProvider } from "@/providers/FormProvider";
+import { usePathname } from "next/navigation";
 
 const font = Figtree({ subsets: ["latin"] });
 
@@ -30,6 +31,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const likedBeats = await getLikedBeats();
+  
 
   return (
     <html lang="en">
