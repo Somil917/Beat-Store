@@ -9,10 +9,16 @@ import { usePathname, useRouter } from "next/navigation";
 import { use, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { BiSearch } from "react-icons/bi";
+import { GiHamburgerMenu } from "react-icons/gi";
 import { CgProfile } from "react-icons/cg";
 import { FiSearch } from "react-icons/fi";
 import { HiOutlineShoppingBag } from "react-icons/hi";
-import { IoIosArrowDown, IoIosLogOut, IoMdHeartEmpty } from "react-icons/io";
+import {
+  IoIosArrowDown,
+  IoIosLogOut,
+  IoMdHeartEmpty,
+  IoMdMenu,
+} from "react-icons/io";
 import { RiNotification3Line } from "react-icons/ri";
 import SearchBox from "./SearchBox";
 import { FaRegHeart } from "react-icons/fa";
@@ -88,47 +94,50 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
   }, [pathname]);
 
   return (
-    <div className="flex w-full h-[65px] fixed top-0 left-0 z-10 border-b border-neutral-700/50">
+    <div className="flex flex-col w-full h-[65px] fixed top-0 left-0 z-20 ">
       <div
         className={`
                 flex
                 flex-row
                 items-center
                 justify-between
-                ${shouldNotShow ? "px-5" : "px-28"}
+                ${shouldNotShow ? "px-5" : "px-4 md:px-10 lg:px-10 xl:px-20 2xl:px-28"}
                 bg-[#141414]
+                border-b
+              border-neutral-700/50
                 w-full
                 py-3
         `}
       >
-        <div>
+        <div className="flex items-center gap-x-2">
           {!shouldNotShow ? (
             <Link
-            href="/"
-            className="font-bold text-2xl text-white cursor-pointer"
-          >
-            WAVESELL
-          </Link>
+              href="/"
+              className="font-bold text-2xl md:text-2xl text-white cursor-pointer"
+            >
+              WAVESELL
+            </Link>
           ) : (
-            <div
-            className="font-bold text-2xl text-white"
-          >
-            STUDIO
-          </div>
+            <div className="font-bold text-2xl text-white">STUDIO</div>
           )}
         </div>
         {!shouldNotShow && (
           <div
             className="
-                    flex
+                    hidden
+                    md:flex
                     items-center
                     gap-1.5
                     bg-neutral-700
                     px-2
+                    md:w-[40%]
+                    lg:w-[46%]
+                    xl:w-[50%]
+                    2xl:w-[50%]
                     py-2
                     border
                     border-solid
-                    border-black
+                    border-neutral-700
                     rounded-[4px]
                 "
           >
@@ -143,21 +152,21 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
         )}
         {user ? (
           <>
-            <div className="flex justify-between items-center text-sm gap-3 text-neutral-400 font-medium">
+            <div className="flex justify-between items-center 2xl:text-sm text-xs md:gap-x-1 gap-x-2.5 2xl:gap-3 text-neutral-400 font-medium">
               {!shouldNotShow && (
                 <button
                   onClick={onClick}
-                  className="rounded-sm mr-5 font-bold px-3 py-1 text-gray-700 hover:text-gray-950 bg-slate-200 transition hover:bg-slate-100"
+                  className="hidden md:block rounded-sm mr-1 lg:mr-4 xl:mr-4 2xl:mr-5 md:mr-4 font-bold px-3 py-1 text-gray-700 hover:text-gray-950 bg-slate-200 transition hover:bg-slate-100"
                 >
                   Start Selling
                 </button>
               )}
               <button
-                className="flex  justify-center items-center cursor-pointer gap-1 hover:bg-neutral-400/10 p-2 rounded-full"
+                className="flex justify-center items-center cursor-pointer gap-1 hover:bg-neutral-400/10 p-2 rounded-full"
                 onClick={toggleProfileCard}
               >
                 <CgProfile size={24} />
-                <IoIosArrowDown />
+                <IoIosArrowDown className="hidden lg:block 2xl:block" />
               </button>
               {isProfileCard && (
                 <Card
@@ -174,7 +183,7 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
                   onClick={toggleCard}
                 >
                   <LuHeart size={22} />
-                  <IoIosArrowDown />
+                  <IoIosArrowDown className="hidden lg:block 2xl:block" />
                 </button>
               )}
               {isCard && (
@@ -185,12 +194,12 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
               {!shouldNotShow && (
                 <button className="flex justify-center items-center gap-1 hover:bg-neutral-400/10 p-2 rounded-full cursor-pointer">
                   <HiOutlineShoppingBag size={22} />
-                  <IoIosArrowDown />
+                  <IoIosArrowDown className="hidden lg:block 2xl:block" />
                 </button>
               )}
-              <button className="flex  justify-center items-center gap-1 hover:bg-neutral-400/10 p-2 rounded-full cursor-pointer">
+              <button className="flex justify-center items-center gap-1 hover:bg-neutral-400/10 p-2 rounded-full cursor-pointer">
                 <RiNotification3Line size={21} />
-                <IoIosArrowDown />
+                <IoIosArrowDown className="hidden lg:block 2xl:block" />
               </button>
             </div>
           </>
@@ -212,13 +221,45 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
               </button>
               <button
                 onClick={authModal.onOpen}
-                className="rounded-sm mx-3 font-bold px-3 py-1 text-gray-700 hover:text-gray-950 bg-slate-200 transition hover:bg-slate-100"
+                className="hidden md:block rounded-sm mx-3 font-bold px-3 py-1 text-gray-700 hover:text-gray-950 bg-slate-200 transition hover:bg-slate-100"
               >
                 Sell Here
               </button>
-              <HiOutlineShoppingBag className="text-3xl cursor-pointer" />
+              <HiOutlineShoppingBag
+                size={22}
+                className="md:text-3xl cursor-pointer"
+              />
             </div>
           </>
+        )}
+      </div>
+      <div className="w-full h-full bg-[#1E1E1D] md:bg-transparent px-3 py-1 flex items-center justify-center">
+        {!shouldNotShow && (
+          <div
+            className="
+                    md:hidden
+                    flex
+                    items-center
+                    gap-1.5
+                    bg-neutral-700
+                    px-2
+                    w-full
+                    py-2
+                    border
+                    border-solid
+                    border-black
+                    rounded-[4px]
+                "
+          >
+            <FiSearch className="text-neutral-400" />
+            <SearchBox
+              className="w-full"
+              placeholder="Search for Genres, Artists etc."
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+          </div>
         )}
       </div>
     </div>

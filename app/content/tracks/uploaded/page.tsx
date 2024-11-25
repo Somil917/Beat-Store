@@ -5,7 +5,7 @@ import CancelTrack from "../new/components/CancelTrack";
 const UploadedTracks = () => {
   return (
     <div className="absolute w-full top-[65px] h-[calc(100vh-65px)] flex flex-col">
-      <CancelTrack/>
+      <CancelTrack uploadedRoute={true} />
       <AllUploadedTracks />
     </div>
   );

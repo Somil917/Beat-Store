@@ -7,16 +7,97 @@ import NavigateRoutes from "./NavigateRoutes";
 import Image from "next/image";
 import { useDraftStore } from "@/hooks/useDraftStore";
 import TrackDetailsUploadModal from "@/components/TrackDetailsUploadModal";
+import toast from "react-hot-toast";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useUser } from "@/hooks/useUser";
+import useGetUserById from "@/hooks/useGetUserById";
 
 const ReviewDetails = () => {
   const { formData } = useFormContext();
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
-  const { coverArt } = useDraftStore();
+  const { draftId, coverArt, audioFile } = useDraftStore();
+  const supabase = useSupabaseClient();
+  const { user } = useUser();
+  const { userDetails } = useGetUserById(user?.id);
+
+  const [isPublishing, setIsPublishing] = useState<boolean>(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const handlePublishClick = async () => {
+    if (
+      !userDetails?.display_name ||
+      !user ||
+      !draftId ||
+      !coverArt ||
+      !audioFile ||
+      !formData.beatinfo.title ||
+      !formData.beatinfo.bpm ||
+      formData.beatinfo.tags.length < 3 ||
+      formData.beatinfo.genres.length < 3
+    ) {
+      return toast.error("Please fill the required fields.");
+    }
+
+    try {
+      setIsPublishing(true);
+
+      const { data: coverBeatData, error: coverBeatError } = await supabase
+        .from("drafts")
+        .select("cover_art_url, audio_file_url")
+        .eq("user_id", user.id)
+        .eq("id", draftId)
+        .single();
+
+      if (coverBeatError) {
+        return toast.error(coverBeatError.message);
+      }
+
+      const { error: supabaseError } = await supabase.from("beats").insert({
+        title: formData.beatinfo.title,
+        author: userDetails.display_name,
+        user_id: user.id,
+        bpm: formData.beatinfo.bpm,
+        key: formData.beatinfo.key,
+        tags: formData.beatinfo.tags,
+        genres: formData.beatinfo.genres,
+        image_path: coverBeatData.cover_art_url,
+        beat_path: coverBeatData.audio_file_url,
+      });
+
+      if (supabaseError) {
+        setIsPublishing(false);
+        return toast.error(supabaseError.message);
+      }
+
+      const { error: draftUpdateError } = await supabase
+        .from("drafts")
+        .update({
+          metadata: formData.beatinfo,
+          is_published: true,
+          is_saved: true,
+        })
+        .eq("user_id", user.id)
+        .eq("id", draftId)
+        .single();
+
+      if (draftUpdateError) {
+        return toast.error(draftUpdateError.message);
+      }
+
+      router.refresh();
+      setIsPublishing(false);
+      toast.success("Published Successfully");
+      router.replace("/content/tracks/uploaded");
+    } catch (error) {
+      toast.error("Something went wrong!");
+    } finally {
+      setIsPublishing(false);
+    }
+  };
 
   return (
     <div className=" bg-[#141414] px-8 py-5 w-[50%] rounded-md border border-neutral-700/50">
@@ -74,7 +155,13 @@ const ReviewDetails = () => {
           >
             Back
           </button>
-          <button className="px-4 hover:bg-blue-700 active:outline active:outline-[6px] active:outline-blue-800 active:bg-blue-500 active:text-black py-1 rounded-md border border-neutral-700/50 bg-blue-800 text-white">
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              handlePublishClick();
+            }}
+            className="px-4 hover:bg-blue-700 active:outline active:outline-[6px] active:outline-blue-800 active:bg-blue-500 active:text-black py-1 rounded-md border border-neutral-700/50 bg-blue-800 text-white"
+          >
             Publish
           </button>
         </div>

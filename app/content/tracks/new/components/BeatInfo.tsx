@@ -212,8 +212,9 @@ const BeatInfo = () => {
                 placeholder="Beat Title"
                 id="title"
                 name="title"
+                aria-required
                 onChange={handleTextChange}
-                value={isMounted ? formData.beatinfo.title || "New Track" : ""}
+                value={isMounted ? formData.beatinfo.title : ""}
               />
             </div>
             <div className="w-full flex justify-between gap-x-4 items-center">

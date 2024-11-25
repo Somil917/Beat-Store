@@ -85,7 +85,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({
 
     return ( 
         <button className={twMerge(``, className)} onClick={handleClick}>
-            <Icon color={isLiked ? "red" : "white"} size={20}/>
+            <Icon color={isLiked ? "red" : "white"} size={19}/>
         </button>
      );
 }

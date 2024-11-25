@@ -18,6 +18,11 @@ export default function Home() {
         title="Trending Tracks"
       />
       <Banners/>
+      <Beatssection
+        href="genres"
+        navigate="See more"
+        title="Popular Genres"
+      />
       <Footer/>
     </>
   );

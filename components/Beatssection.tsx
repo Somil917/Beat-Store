@@ -20,8 +20,8 @@ const Beatssection: React.FC<BeatssectionProps> = async ({
 
   return (
     <>
-      <div className="bg-[#141414] py-8 px-28">
-        <div className="flex justify-between ">
+      <div className="bg-[#141414] py-8 md:px-16 lg:px-10 xl:px-20 2xl:px-28">
+        <div className="flex justify-between px-6 md:px-0">
           <h1 className="text-xl font-semibold">{title}</h1>
           <Link
             href={href}

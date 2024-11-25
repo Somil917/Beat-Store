@@ -60,10 +60,19 @@ const BeatItem: React.FC<BeatItemProps> = ({ data, onClick }) => {
                 absolute
                 top-2
                 right-2
+                bg-neutral-900/40
+                md:bg-transparent
+                md:group-hover:bg-neutral-900/30
+                transition
+                p-2
+                rounded-full
+                flex
+                justify-center
+                items-center
                 "
         >
           <LikeButton
-            className="opacity-0 transition group-hover:opacity-100"
+            className="md:opacity-0 transition w-full opacity-100 md:group-hover:opacity-100"
             beatId={data.id}
           />
         </div>
@@ -86,7 +95,7 @@ const BeatItem: React.FC<BeatItemProps> = ({ data, onClick }) => {
           </p>
           <div className="w-full flex justify-between items-center">
             <p className="text-blue-600 text-sm pb-1 bg-">{data.bpm} BPM</p>
-            <p className="text-neutral-400 text-sm pb-1 bg-">{data.key}</p>
+            <p className="text-neutral-400 hidden md:block text-sm pb-1 bg-">{data.key}</p>
           </div>
         </div>
       </div>

@@ -17,7 +17,7 @@ const SearchBox = forwardRef<HTMLInputElement, InputProps>(({
         <input 
             type={type}
             className={twMerge(`
-                    w-[35rem]
+                    w-full
                     outline-none
                     bg-transparent
                     text-sm

@@ -45,7 +45,6 @@ const SaveDiscardDraftModal = () => {
       router.refresh();
       toast.success("Draft saved successfully");
       router.replace("/content/tracks/uploaded");
-      localStorage.clear();
       onClose();
     } catch (error) {
       toast.error("Failed saving draft");
@@ -76,7 +75,6 @@ const SaveDiscardDraftModal = () => {
       router.refresh();
       toast.success("Draft Deleted successfully");
       router.replace("/content/tracks/uploaded");
-      localStorage.clear();
       onClose();
     } catch (error) {
       toast.error("Failed Deleting Draft");
