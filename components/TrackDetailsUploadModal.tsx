@@ -276,7 +276,7 @@ const TrackDetailsUploadModal: React.FC<TrackDetailsUploadModalProps> = ({
           role="dialog"
           className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
         >
-          <div className="w-[55%] relative h-[85%] flex flex-col gap-y-6 rounded-md p-7 bg-[#141414]">
+          <div className="sm:w-[55%] w-[80%] relative sm:h-[85%] flex flex-col gap-y-6 rounded-md p-7 bg-[#141414]">
             <div className="flex justify-between items-center w-full">
               <h1 className="text-xl font-semibold">{title}</h1>
               <button

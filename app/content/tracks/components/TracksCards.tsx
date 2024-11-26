@@ -64,8 +64,8 @@ const TracksCards: React.FC<TracksCardsProps> = ({ track }) => {
   };
 
   return (
-    <div className="flex border relative border-neutral-700/50 flex-col gap-y-5 bg-[#141414] p-1 rounded-md">
-      <div className="w-[220px] relative overflow-hidden h-[220px] rounded-md">
+    <div className="flex border overflow-hidden border-neutral-700/50 flex-col gap-y-5 bg-[#141414] p-1 rounded-md">
+      <div className="max-w-[220px] 2xl:w-[220px] xl:w-[190px] relative overflow-hidden aspect-square rounded-md">
         <Image
           fill
           className="object-cover rounded-md"
@@ -79,19 +79,19 @@ const TracksCards: React.FC<TracksCardsProps> = ({ track }) => {
       </div>
       <div className="px-2 pb-1">
         <div>
-          <div className="text-sm mb-4 font-medium">
+          <div className="text-sm mb-4 truncate font-medium">
             {track.metadata["title"]}
           </div>
           <p className="text-xs mt-1 text-neutral-400">
             {new Date(track.created_at).toLocaleDateString("en-GB", options)}
           </p>
           <p className="text-xs mt-1 text-neutral-400">
-            {track.metadata["bpm"]  || "0"} { } BPM
+            {track.metadata["bpm"] || "0"} {} BPM
           </p>
         </div>
         <div className="flex gap-x-1 mb-4 items-center w-full text-xs mt-8">
           <div
-            className={`px-3 py-1 rounded-sm ${
+            className={`md:px-3 px-2 py-1 rounded-sm ${
               !track.cover_art_url
                 ? "bg-[#090909] text-neutral-400"
                 : "bg-green-800/30 text-green-500"
@@ -100,7 +100,7 @@ const TracksCards: React.FC<TracksCardsProps> = ({ track }) => {
             Cover
           </div>
           <div
-            className={`px-3 py-1 rounded-sm ${
+            className={`md:px-3 px-2 py-1 rounded-sm ${
               !track.audio_file_url
                 ? "bg-[#090909] text-neutral-400"
                 : "bg-green-800/30 text-green-500"
@@ -109,7 +109,7 @@ const TracksCards: React.FC<TracksCardsProps> = ({ track }) => {
             MP3
           </div>
           <div
-            className={`px-3 py-1 rounded-sm ${
+            className={`md:px-3 px-2 py-1 rounded-sm ${
               !track.audio_file_url
                 ? "bg-[#090909] text-neutral-400"
                 : "bg-green-800/30 text-green-500"
@@ -123,21 +123,23 @@ const TracksCards: React.FC<TracksCardsProps> = ({ track }) => {
             className="w-5 h-5 bg-transparent border-1 border-neutral-400"
             type="checkbox"
           />
-          <BsThreeDots
-            onClick={toggleCard}
-            className="text-neutral-300 cursor-pointer hover:text-neutral-100"
-            size={20}
-          />
-          {isCard && (
-            <Card className="absolute w-28 flex justify-start gap-1 items-start h-32 top-64 right-3">
-              <div className="cursor-pointer" onClick={deleteDraft}>
-                Delete
-              </div>
-              <div onClick={handleEditClick} className="cursor-pointer">
-                Edit
-              </div>
-            </Card>
-          )}
+          <div className="relative">
+            <BsThreeDots
+              onClick={toggleCard}
+              className="text-neutral-300 cursor-pointer hover:text-neutral-100"
+              size={20}
+            />
+            {isCard && (
+              <Card className="absolute w-28 flex justify-start gap-1 items-start h-32 top-[-650%] right-0">
+                <div className="cursor-pointer" onClick={deleteDraft}>
+                  Delete
+                </div>
+                <div onClick={handleEditClick} className="cursor-pointer">
+                  Edit
+                </div>
+              </Card>
+            )}
+          </div>
         </div>
       </div>
     </div>

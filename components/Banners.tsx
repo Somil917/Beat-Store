@@ -6,7 +6,7 @@ const Banners = () => {
   return (
     <div className="relative">
       <Image
-        src={"/images/Overlay.webp"}
+        src={"/images/Overlay.png"}
         className="object-cover w-full h-full z-0 opacity-20 pointer-events-none"
         fill
         alt="overlay"

@@ -1,6 +1,6 @@
 import getBeatsById from "@/actions/getBeatsById";
 import UserBeats from "@/components/UserBeats";
-import UserEdit from "@/components/UserEdit"
+import UserEdit from "@/components/UserEdit";
 import useGetSongById from "@/hooks/useGetSongById";
 import useGetUserById from "@/hooks/useGetUserById";
 import { useUser } from "@/hooks/useUser";
@@ -11,16 +11,20 @@ import React from "react";
 export const revalidate = 0;
 
 const Dashboard = async () => {
-    const data = await getBeatsById();
+  const data = await getBeatsById();
 
-    return ( 
-        <>
-            <div className="w-full bg-[#090909] items-start flex p-28  justify-center  gap-3">
-            <UserEdit/>
-            <UserBeats beats={data}/>
-            </div>
-        </>
-     );
-}
- 
+  return (
+    <>
+      <div className="hidden md:flex w-full bg-[#090909] items-start md:p-10 md:py-28 xl:p-28  justify-center  gap-3">
+        <UserEdit />
+        <UserBeats beats={data} />
+      </div>
+      <div className="flex flex-col md:hidden min-h-screen py-32 w-full bg-[#090909] items-start md:p-10 md:py-28 xl:p-28  justify-center  gap-3">
+        <UserEdit />
+        <UserBeats beats={data} />
+      </div>
+    </>
+  );
+};
+
 export default Dashboard;

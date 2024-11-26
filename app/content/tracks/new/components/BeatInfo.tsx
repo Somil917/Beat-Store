@@ -162,12 +162,12 @@ const BeatInfo = () => {
   };
 
   return (
-    <div className=" bg-[#141414] px-8 py-5 w-[50%] rounded-md border border-neutral-700/50">
+    <div className=" bg-[#141414] px-8 py-5 2xl:w-[50%] xl:w-[55%] lg:w-[60%] md:w-[80%] w-[90%] rounded-md border border-neutral-700/50">
       <div className="flex  w-full flex-col gap-y-6 h-full">
         <NavigateRoutes />
-        <form className="w-full flex justify-center items-start gap-x-8">
+        <form className="w-full flex flex-col md:flex-row justify-center items-center md:items-start gap-x-8">
           <div>
-            <div className="overflow-hidden flex justify-center items-center relative border border-neutral-700/50 h-[200px] w-[200px] bg-neutral-700 rounded-md">
+            <div className="overflow-hidden flex justify-center items-center relative border border-neutral-700/50 h-[150px] w-[150px] md:h-[200px] md:w-[200px] bg-neutral-700 rounded-md">
               {isCoverFetching ? (
                 <div className=" h-[200px] w-[200px] flex justify-center items-center">
                   <ClipLoader size={50} color={"#3498db"} loading={true} />
@@ -193,7 +193,7 @@ const BeatInfo = () => {
             <div className="text-center mt-5">
               <button
                 onClick={handleOpenTrackDetailsModal}
-                className=" px-4 py-2 text-blue-500 hover:bg-blue-800/40 active:outline active:outline-[6px] active:outline-blue-800/40 active:bg-blue-700 active:text-black bg-blue-800/20 font-medium rounded-full cursor-pointer"
+                className="text-sm md:text-base px-4 py-2 text-blue-500 hover:bg-blue-800/40 active:outline active:outline-[6px] active:outline-blue-800/40 active:bg-blue-700 active:text-black bg-blue-800/20 font-medium rounded-full cursor-pointer"
               >
                 Upload CoverArt
               </button>

@@ -46,7 +46,7 @@ const UploadBeat = () => {
   };
 
   return (
-    <div className=" bg-[#141414] px-8 py-5 w-[50%] rounded-md border border-neutral-700/50">
+    <div className=" bg-[#141414] px-8 py-5 2xl:w-[50%] xl:w-[55%] lg:w-[60%] md:w-[80%] w-[90%] rounded-md border border-neutral-700/50">
       <div className="flex flex-col gap-y-6  h-full">
         <NavigateRoutes />
         <form className="flex flex-col gap-y-5">
@@ -59,8 +59,8 @@ const UploadBeat = () => {
               We will convert the WAV file into an (un-tagged & tagged) MP3 file
               for streaming and purchasing purposes.
             </div>
-            <div className="w-full flex justify-between items-center px-4 py-3 rounded-md border border-neutral-700/60">
-              <div className="flex gap-x-3 items-center">
+            <div className="w-full flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between items-center px-4 py-3 rounded-md border border-neutral-700/60">
+              <div className="flex flex-col sm:flex-row gap-x-3 items-center">
                 <div className="relative inline-block">
                   <div className="circular-border inset-0 absolute"></div>
                   <div className="z-10 transition w-[50px] h-[50px] flex justify-center items-center p-2 rounded-full">
@@ -72,7 +72,7 @@ const UploadBeat = () => {
                     />
                   </div>
                 </div>
-                <div className="w-full flex flex-col justify-center">
+                <div className="w-full flex items-center sm:items-start flex-col justify-center">
                   <div className="text-lg font-medium ">Un-tagged audio</div>
                   <p className="text-sm text-neutral-400">
                     Upload .mp3 or .wav files only
@@ -149,15 +149,15 @@ const UploadBeat = () => {
               additional licensing options for your clients. Your active
               licenses that include stem files, will automatically be enabled.
             </div>
-            <div className="w-full flex justify-between items-center px-4 py-3 rounded-md border border-neutral-700/60">
-              <div className="flex gap-x-3 items-center">
+            <div className="w-full flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between items-center px-4 py-3 rounded-md border border-neutral-700/60">
+              <div className="flex flex-col sm:flex-row gap-x-3 items-center">
                 <div className="relative inline-block">
                   <div className="circular-border inset-0 absolute"></div>
                   <div className="z-10 w-[50px] h-[50px] flex justify-center items-center p-2 rounded-full">
                     <IoFolderOpenSharp className="text-neutral-400" size={23} />
                   </div>
                 </div>
-                <div className="w-full flex flex-col justify-center">
+                <div className="w-full flex items-center sm:items-start flex-col justify-center">
                   <div className="text-lg font-medium ">Track Stems</div>
                   <p className="text-sm text-neutral-400">
                     Upload .zip or .rar files only
@@ -187,15 +187,15 @@ const UploadBeat = () => {
               AUDIO FILES FOR STREAMING
             </div>
             <div className="text-xl mb-4 font-semibold ">Tagged file</div>
-            <div className="w-full flex justify-between items-center px-4 py-3 rounded-md border border-neutral-700/60">
-              <div className="flex gap-x-3 items-center">
+            <div className="w-full flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between items-center px-4 py-3 rounded-md border border-neutral-700/60">
+              <div className="flex flex-col sm:flex-row gap-x-3 items-center">
                 <div className="relative inline-block">
                   <div className="circular-border inset-0 absolute"></div>
                   <div className="z-10 w-[50px] h-[50px] flex justify-center items-center p-2 rounded-full">
                     <IoMdMusicalNote className="text-neutral-400" size={30} />
                   </div>
                 </div>
-                <div className="w-full flex flex-col justify-center">
+                <div className="w-full flex items-center sm:items-start flex-col justify-center">
                   <div className="text-lg font-medium ">Tagged audio</div>
                   <p className="text-sm text-neutral-400">
                     Upload .mp3 or .wav files only

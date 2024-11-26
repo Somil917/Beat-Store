@@ -79,6 +79,12 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
     setIsProfileCard(!isProfileCard);
   };
 
+  const handleSearch = () => {
+    const query = { title: value };
+    const url = qs.stringifyUrl({ url: "/search", query });
+    router.push(url);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -101,7 +107,11 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
                 flex-row
                 items-center
                 justify-between
-                ${shouldNotShow ? "px-5" : "px-4 md:px-10 lg:px-10 xl:px-20 2xl:px-28"}
+                ${
+                  shouldNotShow
+                    ? "px-5"
+                    : "px-4 md:px-10 lg:px-10 xl:px-20 2xl:px-28"
+                }
                 bg-[#141414]
                 border-b
               border-neutral-700/50
@@ -130,7 +140,7 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
                     gap-1.5
                     bg-neutral-700
                     px-2
-                    md:w-[40%]
+                    md:w-[32%]
                     lg:w-[46%]
                     xl:w-[50%]
                     2xl:w-[50%]
@@ -141,7 +151,10 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
                     rounded-[4px]
                 "
           >
-            <FiSearch className="text-neutral-400" />
+            <FiSearch
+              onClick={handleSearch}
+              className="text-neutral-400 cursor-pointer"
+            />
             <SearchBox
               placeholder="Search for Genres, Artists etc."
               value={value}
@@ -161,35 +174,48 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
                   Start Selling
                 </button>
               )}
-              <button
-                className="flex justify-center items-center cursor-pointer gap-1 hover:bg-neutral-400/10 p-2 rounded-full"
-                onClick={toggleProfileCard}
-              >
-                <CgProfile size={24} />
-                <IoIosArrowDown className="hidden lg:block 2xl:block" />
-              </button>
-              {isProfileCard && (
-                <Card
-                  className={`${
-                    !shouldNotShow ? "right-[320px]" : "right-[90px]"
-                  } w-[180px]`}
-                >
-                  <ProfileCardItems />
-                </Card>
-              )}
-              {!shouldNotShow && (
+              <div className="relative">
                 <button
-                  className="flex justify-center items-center gap-1 hover:bg-neutral-400/10 p-2 rounded-full cursor-pointer"
-                  onClick={toggleCard}
+                  className="flex justify-center items-center cursor-pointer gap-1 hover:bg-neutral-400/10 p-2 rounded-full"
+                  onClick={toggleProfileCard}
                 >
-                  <LuHeart size={22} />
+                  <CgProfile size={24} />
                   <IoIosArrowDown className="hidden lg:block 2xl:block" />
                 </button>
-              )}
-              {isCard && (
-                <Card className="right-[250px]">
-                  <LikeCardItems beats={beats} />
-                </Card>
+                {isProfileCard && (
+                  <Card
+                    className={`${
+                      !shouldNotShow
+                        ? "right-[0px] top-[100%]"
+                        : "right-[0px] top-[100%]"
+                    } md:w-[180px] w-[140px] h-[300px] md:h-[360px] absolute`}
+                  >
+                    <ProfileCardItems />
+                  </Card>
+                )}
+              </div>
+              {!shouldNotShow && (
+                <div className="relative">
+                  <button
+                    className=" hidden 2xl:flex lg:flex xl:flex justify-center items-center gap-1 hover:bg-neutral-400/10 p-2 rounded-full cursor-pointer"
+                    onClick={toggleCard}
+                  >
+                    <LuHeart size={22} />
+                    <IoIosArrowDown className="hidden lg:block 2xl:block" />
+                  </button>
+                  <Link
+                    className="xl:hidden 2xl:hidden lg:hidden flex justify-center items-center gap-1 hover:bg-neutral-400/10 p-2 rounded-full cursor-pointer"
+                    href="/liked"
+                  >
+                    <LuHeart size={22} />
+                    <IoIosArrowDown className="hidden lg:block 2xl:block" />
+                  </Link>
+                  {isCard && (
+                    <Card className="absolute top-[100%] right-0">
+                      <LikeCardItems beats={beats} />
+                    </Card>
+                  )}
+                </div>
               )}
               {!shouldNotShow && (
                 <button className="flex justify-center items-center gap-1 hover:bg-neutral-400/10 p-2 rounded-full cursor-pointer">
@@ -233,7 +259,7 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
           </>
         )}
       </div>
-      <div className="w-full h-full bg-[#1E1E1D] md:bg-transparent px-3 py-1 flex items-center justify-center">
+      <div className="w-full h-full bg-[#1E1E1D] md:bg-transparent px-3 flex items-center justify-center">
         {!shouldNotShow && (
           <div
             className="
@@ -244,6 +270,7 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
                     bg-neutral-700
                     px-2
                     w-full
+                    mt-1
                     py-2
                     border
                     border-solid
@@ -251,7 +278,10 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
                     rounded-[4px]
                 "
           >
-            <FiSearch className="text-neutral-400" />
+            <FiSearch
+              onClick={handleSearch}
+              className="text-neutral-400 cursor-pointer"
+            />
             <SearchBox
               className="w-full"
               placeholder="Search for Genres, Artists etc."

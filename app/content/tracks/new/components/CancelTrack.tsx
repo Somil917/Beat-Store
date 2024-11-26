@@ -15,7 +15,7 @@ const CancelTrack: React.FC<CancelTrackProps> = ({ uploadedRoute }) => {
   const { isOpen, onOpen } = useSaveDiscardDraftModal();
 
   return (
-    <div className="w-full px-16 py-4 bg-[#141414]">
+    <div className="w-full px-6 sm:px-16 py-4 bg-[#141414]">
       <div className="text-xl  font-semibold flex items-center gap-x-2">
         {!uploadedRoute ? (
           <Tippy content="Back to tracks" placement="right">

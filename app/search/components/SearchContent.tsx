@@ -1,5 +1,6 @@
 "use client";
 
+import BeatCards from "@/components/BeatCards";
 import LikeButton from "@/components/LikeButton";
 import MediaItem from "@/components/MediaItem";
 import useOnPlay from "@/hooks/useOnPlay";
@@ -12,32 +13,68 @@ interface SearchContentProps {
 const SearchContent: React.FC<SearchContentProps> = ({ beats }) => {
   const onPlay = useOnPlay(beats);
 
-  if (beats.length === 0) {
-    return (
+  return (
+    <div>
       <div
         className="
-        flex
-        justify-center
-        gap-y-2
-        w-full
-        px-6
-        text-neutral-400
+        hidden
+        md:block
+        min-h-screen
+        bg-[#090909]
+        2xl:py-16
+        py-20
+        2xl:px-28
+        md:px-10 
+        lg:px-10 
+        xl:px-20
+        px-4
+        mt-14
         "
       >
-        No results found.
+        <h1 className="2xl:text-2xl xl:text-2xl lg:2xl md:3xl text-3xl font-semibold">
+          Tracks
+        </h1>
+        <BeatCards className1="2xl:grid-cols-5" beats={beats} />
       </div>
-    );
-  }
-
-  return (
-    <div className="flex 
-        mt-14 flex-col items-center w-full min-h-screen gap-y-2 px-40 py-11">
-      {beats.map((beat) => (
-        <div key={beat.id} className="flex items-center pr-4 justify-between rounded-md bg-neutral-800/50 gap-x-4 w-full">
-          <MediaItem data={beat} onClick={(id: string) => onPlay(id)} />
-          <LikeButton beatId={beat.id}/>
-        </div>
-      ))}
+      <div
+        className="
+        md:hidden
+        flex
+        flex-col
+        w-full
+        bg-[#090909]
+        gap-y-6 
+        min-h-screen
+        mt-16
+        px-5
+        py-20
+        "
+      >
+        <h1 className="2xl:text-2xl text-3xl font-semibold">Tracks</h1>
+        {beats.length === 0 ? (
+          <div className="text-neutral-400">No Tracks Available.</div>
+        ) : (
+          beats.map((beat) => (
+            <div
+              className="
+              flex
+              items-center
+              justify-between
+              w-full
+              gap-x-4
+              "
+              key={beat.id}
+            >
+              <MediaItem
+                data={beat}
+                className="p-0"
+                onClick={(id: string) => onPlay(id)}
+              />
+              <LikeButton beatId={beat.id} />
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };

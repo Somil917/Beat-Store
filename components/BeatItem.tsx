@@ -8,18 +8,20 @@ import PlayBtn from "./PlayBtn";
 import LikeButton from "./LikeButton";
 import useOnPlay from "@/hooks/useOnPlay";
 import { BsPauseBtn } from "react-icons/bs";
+import { twMerge } from "tailwind-merge";
 
 interface BeatItemProps {
   data: Beat;
+  className?: string;
   onClick: (id: string) => void;
 }
 
-const BeatItem: React.FC<BeatItemProps> = ({ data, onClick }) => {
+const BeatItem: React.FC<BeatItemProps> = ({ data, className, onClick }) => {
   const imagePath = useLoadImage(data);
 
   return (
     <div
-      className="
+      className={twMerge(`
                 relative
                 group
                 flex
@@ -32,8 +34,9 @@ const BeatItem: React.FC<BeatItemProps> = ({ data, onClick }) => {
                 cursor-pointer
                 hover:bg-neutral-400/10
                 transition
-                p-4
-            "
+                md:p-4
+                p-2
+        `, className)}
     >
       <div
         className="
@@ -89,13 +92,13 @@ const BeatItem: React.FC<BeatItemProps> = ({ data, onClick }) => {
       </div>
       <div className="flex flex-col pt-4 w-full gap-y-1">
         <p className="truncate font-semibold w-full">{data.title}</p>
-        <div className="flex items-center justify-between w-full ">
+        <div className="flex items-center justify-around w-full ">
           <p className="text-neutral-400 text-sm pb-1 w-full truncate pr-1">
             By {data.author}
           </p>
           <div className="w-full flex justify-between items-center">
-            <p className="text-blue-600 text-sm pb-1 bg-">{data.bpm} BPM</p>
-            <p className="text-neutral-400 hidden md:block text-sm pb-1 bg-">{data.key}</p>
+            <p className="text-blue-600 text-sm pb-1 truncate">{data.bpm} BPM</p>
+            <p className="text-neutral-400 hidden xl:block text-sm pb-1 bg-">{data.key}</p>
           </div>
         </div>
       </div>

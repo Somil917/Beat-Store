@@ -92,9 +92,9 @@ const SaveDiscardDraftModal = () => {
           exit={{ opacity: 1, scale: 1 }}
           aria-modal="true"
           role="dialog"
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+          className="fixed inset-0 flex px-4 sm:px-0 items-center justify-center bg-black bg-opacity-50 z-50"
         >
-          <div className="bg-[#141414] p-7 rounded-md relative">
+          <div className="bg-[#141414] sm:p-7 p-5 rounded-md relative">
             <MdClose
               onClick={onClose}
               className="cursor-pointer absolute top-5 right-5"
@@ -105,8 +105,12 @@ const SaveDiscardDraftModal = () => {
                 Do you want to save the draft?
               </h2>
             </div>
-            <p className="mb-10 flex-wrap">
+            <p className="hidden sm:flex mb-10 flex-wrap">
               If you delete your draft, all the info you changed will be <br />{" "}
+              discarded
+            </p>
+            <p className="sm:hidden mb-10 flex-wrap">
+              If you delete your draft, all the info you changed will be
               discarded
             </p>
             <div className="flex justify-end my-2 pt-6 border-t border-neutral-700/50 ">

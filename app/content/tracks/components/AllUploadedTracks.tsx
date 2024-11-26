@@ -6,7 +6,7 @@ const AllUploadedTracks = async () => {
   const drafts = await getDrafts();
 
   return (
-    <div className="scrollbar-no-arrows w-full overflow-y-auto h-full max-h-[calc(100vh-65px)] bg-[#090909] flex flex-col items-center px-32 pb-32 pt-16">
+    <div className="scrollbar-no-arrows w-full overflow-y-auto h-full max-h-[calc(100vh-65px)] bg-[#090909] flex flex-col items-center px-5 md:px-32 pb-32 pt-16">
       <div 
       className="
             grid

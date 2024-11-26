@@ -100,12 +100,12 @@ const ReviewDetails = () => {
   };
 
   return (
-    <div className=" bg-[#141414] px-8 py-5 w-[50%] rounded-md border border-neutral-700/50">
+    <div className=" bg-[#141414] px-8 py-5 2xl:w-[50%] xl:w-[55%] lg:w-[60%] md:w-[80%] w-[90%] rounded-md border border-neutral-700/50">
       <div className="flex w-full flex-col gap-y-2 h-full">
         <NavigateRoutes />
         <h2 className="text-xl font-bold text-white mb-2 mt-4">Beat Info</h2>
         <div className="flex gap-6">
-          <div className="overflow-hidden flex justify-center items-center relative border border-neutral-700/50 h-[200px] w-[200px] bg-neutral-700 rounded-md">
+          <div className="overflow-hidden flex justify-center items-center relative border border-neutral-700/50 h-[150px] w-[150px] md:h-[200px] md:w-[200px] bg-neutral-700 rounded-md">
             {coverArt ? (
               <Image
                 src={coverArt}

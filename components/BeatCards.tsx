@@ -8,11 +8,17 @@ import useOnPlay from "@/hooks/useOnPlay";
 
 interface BeatCardsProps {
   beats: Beat[];
-  className?: string;
+  className1?: string;
+  className2?: string;
   limit?: number;
 }
 
-const BeatCards: React.FC<BeatCardsProps> = ({ beats, className, limit }) => {
+const BeatCards: React.FC<BeatCardsProps> = ({
+  beats,
+  className1,
+  className2,
+  limit,
+}) => {
   const onPlay = useOnPlay(beats);
 
   if (beats.length === 0) {
@@ -36,7 +42,7 @@ const BeatCards: React.FC<BeatCardsProps> = ({ beats, className, limit }) => {
             gap-1
             mt-4
         `,
-          className
+          className1
         )}
       >
         {limitedCards.map((item) => (
@@ -55,16 +61,17 @@ const BeatCards: React.FC<BeatCardsProps> = ({ beats, className, limit }) => {
             overflow-x-auto
             scroll-smooth
             scrollbar-hide
-            -space-x-3
+            -space-x-1
             mt-4
-            px-1
+            px-3
         `,
-          className
+          className2
         )}
       >
         {limitedCards.map((item) => (
           <div key={item.id} className="flex-shrink-0 w-[180px]">
             <BeatItem
+              className="p-3"
               key={item.id}
               data={item}
               onClick={(id: string) => onPlay(id)}
