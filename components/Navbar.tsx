@@ -29,6 +29,7 @@ import { Beat } from "@/types";
 import LikeCardItems from "./LikeCardItems";
 import ProfileCardItems from "./ProfileCardItems";
 import React from "react";
+import useSubscribeModal from "@/hooks/useSubscribeModal";
 
 // interface NavbarProps {
 //   children: React.ReactNode;
@@ -50,9 +51,11 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
 
   const pathname = usePathname();
 
-  const { user } = useUser();
+  const { user, subscription } = useUser();
 
   const uploadModal = useUploadModal();
+
+  const subscribeModal = useSubscribeModal();
 
   const hideContentOnRoutes = [
     "/content/tracks/new/info",
@@ -67,6 +70,10 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
   const onClick = () => {
     if (!user) {
       return authModal.onOpen();
+    }
+
+    if (!subscription) {
+      return subscribeModal.onOpen();
     }
 
     return uploadModal.onOpen();

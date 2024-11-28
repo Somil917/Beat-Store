@@ -36,10 +36,10 @@ export async function POST(request: Request) {
       mode: "subscription",
       allow_promotion_codes: true,
       subscription_data: {
-        trial_from_plan: true,
+        trial_period_days: 7,
         metadata,
       },
-      success_url: `${getURL()}/account`,
+      success_url: `${getURL()}/dashboard`,
       cancel_url: `${getURL()}`,
     });
 

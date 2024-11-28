@@ -74,6 +74,7 @@ const TracksCards: React.FC<TracksCardsProps> = ({ track }) => {
               ? draftImage
               : avatarImage || "/images/partynextdoor.jpeg"
           }
+          sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 33vw"
           alt="cover"
         />
       </div>

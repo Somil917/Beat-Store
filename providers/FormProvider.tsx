@@ -68,6 +68,7 @@ export const useFormContext = () => {
 };
 
 export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
+
   const [formData, setFormData] = useState<FormData>(defaultFormData);
 
   const updateFormData = <T extends keyof FormData>(

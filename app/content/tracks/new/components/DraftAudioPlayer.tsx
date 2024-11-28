@@ -153,13 +153,13 @@ const DraftAudioPlayer: React.FC<DraftAudioPlayerProps> = ({
           className={twMerge(
             `"
             grid
-            w-[40%]
+            w-[90%]
+            md:w-[50%]
+            lg:w-[40%]
             overflow-hidden
             rounded-lg
             m-auto
             grid-cols-2
-            md:grid-cols-2
-            realative
             bg-[#101010]
             border
             border-neutral-700/60
@@ -187,7 +187,7 @@ const DraftAudioPlayer: React.FC<DraftAudioPlayerProps> = ({
         />
         <div>{beatDuration} / {currentTime}</div>
       </div> */}
-          <div
+          {/* <div
             className="
                 flex
                 md:hidden
@@ -214,13 +214,12 @@ const DraftAudioPlayer: React.FC<DraftAudioPlayerProps> = ({
             >
               <Icon size={30} className="text-blue" />
             </div>
-          </div>
+          </div> */}
 
           <div
             className="
-                hidden
                 h-full
-                md:flex
+                flex
                 justify-start
                 items-center
                 w-full
@@ -269,7 +268,7 @@ const DraftAudioPlayer: React.FC<DraftAudioPlayerProps> = ({
                     "
         /> */}
           </div>
-          <div className="hidded md:flex w-full justify-end pr-2">
+          <div className="flex w-full justify-end pr-2">
             <div className="flex items-center gap-x-2 w-[120px]">
               <VolumeIcon
                 onClick={toggleMute}

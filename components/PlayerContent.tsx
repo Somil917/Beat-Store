@@ -132,7 +132,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ beat, beatUrl, className 
     <div
       className={twMerge(`"
             grid
-            grid-cols-2
+            grid-cols-[80%_20%]
             md:grid-cols-3
             h-full
             realative
@@ -159,6 +159,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ beat, beatUrl, className 
       <div
         className="
                 flex
+                md:w-full
                 w-full
                 justify-start
             "
@@ -167,7 +168,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ beat, beatUrl, className 
           className="
                     flex
                     items-center
-                    gap-x-4
+                    w-full
                 "
         >
           <MediaItem data={beat} />

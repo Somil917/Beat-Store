@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import NavBarWrapper from "@/components/NavbarWrapper";
 import { FormProvider } from "@/providers/FormProvider";
 import { usePathname } from "next/navigation";
+import getActiveProductsWithPrices from "@/actions/getActiveProductsWithPrices";
 
 const font = Figtree({ subsets: ["latin"] });
 
@@ -31,23 +32,23 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const likedBeats = await getLikedBeats();
-  
+  const products = await getActiveProductsWithPrices();
 
   return (
     <html lang="en">
       <body className={font.className}>
-        <NextTopLoader/>
-        <ToasterProvider/>
+        <NextTopLoader />
+        <ToasterProvider />
         <SupabaseProvider>
           <UserProvider>
-            <ModalProvider />
+            <ModalProvider products={products} />
             <FormProvider>
-            <NavBarWrapper beats={likedBeats} />
-            {/* <Hero /> */}
-            {children}
-            {/* <Beatssection href="topcharts" title="Top Generes" navigate="See More"/> */}
-            {/* <Beatssection/> */}
-            <Player/>
+              <NavBarWrapper beats={likedBeats} />
+              {/* <Hero /> */}
+              {children}
+              {/* <Beatssection href="topcharts" title="Top Generes" navigate="See More"/> */}
+              {/* <Beatssection/> */}
+              <Player />
             </FormProvider>
           </UserProvider>
         </SupabaseProvider>

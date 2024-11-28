@@ -103,7 +103,7 @@ const UploadBeat = () => {
                   )}
                 </button>
                 <div
-                  className={`absolute overflow-hidden m-auto w-full  left-0 py-4 px-2 z-30 bottom-0  ${
+                  className={`fixed overflow-hidden m-auto w-full left-1/2 transform -translate-x-1/2 py-3 px-2 z-30 bottom-0  ${
                     isPlayerVisible ? "flex" : "hidden"
                   }`}
                 >

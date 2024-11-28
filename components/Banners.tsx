@@ -1,12 +1,33 @@
 "use client";
 
+import useAuthModal from "@/hooks/useAuthModal";
+import useSubscribeModal from "@/hooks/useSubscribeModal";
+import useUploadModal from "@/hooks/useUploadModal";
+import { useUser } from "@/hooks/useUser";
 import Image from "next/image";
 
 const Banners = () => {
+  const authModal = useAuthModal();
+  const subscribeModal = useSubscribeModal();
+  const uploadModal = useUploadModal();
+  const { user, subscription } = useUser();
+
+  const onClick = () => {
+    if (!user) {
+      return authModal.onOpen();
+    }
+
+    if (!subscription) {
+      return subscribeModal.onOpen();
+    }
+
+    return uploadModal.onOpen();
+  };
+
   return (
     <div className="relative">
       <Image
-        src={"/images/Overlay.png"}
+        src="/images/overlay.png"
         className="object-cover w-full h-full z-0 opacity-20 pointer-events-none"
         fill
         alt="overlay"
@@ -55,7 +76,10 @@ const Banners = () => {
           choosing WAVESELL. Start today and upload your first beat.
         </div>
         <div className="w-full flex cursor-pointer justify-center md:justify-start items-center mt-10 ">
-          <button className="w-full md:w-32 font-semibold rounded-md py-3 bg-blue-600 hover:bg-blue-500/90">
+          <button
+            onClick={onClick}
+            className="w-full md:w-32 font-semibold rounded-md py-3 bg-blue-600 hover:bg-blue-500/90"
+          >
             Subscribe
           </button>
         </div>

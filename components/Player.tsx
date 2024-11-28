@@ -44,7 +44,8 @@ const Player = () => {
             w-[90%]
             py-2
             h-[80px]
-            px-4
+            md:px-4
+            px-0
         "
         >
           <PlayerContent key={beatUrl} beat={beat} beatUrl={beatUrl} />

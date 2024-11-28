@@ -3,19 +3,26 @@
 import useGetUserById from "@/hooks/useGetUserById";
 import useLoadAvatarImage from "@/hooks/useLoadAvatarImage";
 import { useUser } from "@/hooks/useUser";
-import { UserDetails } from "@/types";
+import { postData } from "@/libs/helpers";
+import { Product, ProductWithPrice, UserDetails } from "@/types";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
-const UserEdit = () => {
+interface UserEditProps {
+  products: Product[];
+}
+
+const UserEdit: React.FC<UserEditProps> = ({ products }) => {
   const supabaseClient = useSupabaseClient();
   const router = useRouter();
 
-  const { user, isLoading } = useUser();
+  const { user, isLoading, subscription } = useUser();
   const { userDetails } = useGetUserById(user?.id);
   const avatar_url = useLoadAvatarImage(userDetails!);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!user && !isLoading) {
@@ -26,6 +33,19 @@ const UserEdit = () => {
 
   const handleClick = () => {
     router.push("account/profile");
+  };
+
+  const redirectToCustomerPortal = async () => {
+    setLoading(true);
+    try {
+      const { url, error } = await postData({
+        url: "/api/create-portal-link",
+      });
+      window.location.assign(url);
+    } catch (error) {
+      toast.error((error as Error).message);
+    }
+    setLoading(false);
   };
 
   return (
@@ -64,8 +84,22 @@ const UserEdit = () => {
               <td className="text-right pb-2">{userDetails?.full_name}</td>
             </tr>
             <tr className="text-base text-neutral-300">
-              <td className="pb-2">Subscription</td>
-              <td className="text-right pb-2">NA</td>
+              <td className="pb-2 align-top">Subscription</td>
+              <td className="text-right pb-2">
+                {!subscription && "NA"}
+                {subscription && (
+                  <div>
+                    {products[0].name}
+                    <button
+                      onClick={redirectToCustomerPortal}
+                      disabled={loading || isLoading}
+                      className="py-1 px-3 bg-blue-600 mt-2 font-medium text-sm rounded-full"
+                    >
+                      Plan Details
+                    </button>{" "}
+                  </div>
+                )}
+              </td>
             </tr>
           </tbody>
         </table>
