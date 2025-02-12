@@ -15,7 +15,8 @@ const NavBarWrapper: React.FC<NavBarWrapperProps> = ({ beats }) => {
     "/auth/signin",
   ];
 
-  return <>{!noNavbarRoutes.includes(pathname) && <Navbar beats={beats} />}</>;
+  return <div className="
+              ">{!noNavbarRoutes.includes(pathname) && <Navbar beats={beats} />}</div>;
 };
 
 export default NavBarWrapper;

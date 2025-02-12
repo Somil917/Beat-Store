@@ -48,10 +48,12 @@ const SubscribeModal: React.FC<SubscribeModalProps> = ({ products }) => {
       return toast("Already Subscribed");
     }
 
+    const purchaseType = "subscription";
+
     try {
       const { sessionId } = await postData({
         url: "/api/create-checkout-session",
-        data: { price },
+        data: { price, purchaseType },
       });
 
       const stripe = await getStripe();

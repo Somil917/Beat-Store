@@ -34,7 +34,6 @@ const SaveDiscardDraftModal = () => {
           is_saved: true,
         })
         .eq("id", draftId)
-        .single();
 
       if (saveError) {
         setIsSaving(false);
@@ -42,9 +41,9 @@ const SaveDiscardDraftModal = () => {
       }
 
       setIsSaving(false);
-      router.refresh();
       toast.success("Draft saved successfully");
       router.replace("/content/tracks/uploaded");
+      router.refresh();
       onClose();
     } catch (error) {
       toast.error("Failed saving draft");
@@ -57,7 +56,7 @@ const SaveDiscardDraftModal = () => {
     if (!user || !draftId) return;
 
     try {
-      setIsDeleting(false);
+      setIsDeleting(true);
 
       const { error: deleteError } = await supabase
         .from("drafts")

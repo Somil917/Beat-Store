@@ -2,7 +2,7 @@ import { Draft } from "@/types";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 
-const getDrafts = async (): Promise<Draft | null> => {
+const getUnsavedDraftInfo = async (): Promise<Draft | null> => {
   const supabase = createServerComponentClient({
     cookies: cookies,
   });
@@ -30,4 +30,4 @@ const getDrafts = async (): Promise<Draft | null> => {
   return (data as any);
 };
 
-export default getDrafts;
+export default getUnsavedDraftInfo;

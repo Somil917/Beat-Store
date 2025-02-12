@@ -22,6 +22,9 @@ export interface Beat {
   image_path: string;
   key: string;
   bpm: number;
+  created_at: string;
+  tags: string[];
+  genres: string[];
 }
 
 export interface Draft {

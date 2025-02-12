@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import toast from "react-hot-toast";
 import { CgProfile } from "react-icons/cg";
+import { HiOutlineShoppingBag } from "react-icons/hi";
 import { IoIosLogOut } from "react-icons/io";
 
 const ProfileCardItems = () => {
@@ -37,6 +38,15 @@ const ProfileCardItems = () => {
             <CgProfile size={23} />
           </button>
           Profile
+        </Link>
+        <Link
+          href="/purchased"
+          className="w-full cursor-pointer px-2 py-1 hover:bg-neutral-400/10 rounded-md flex justify-start items-center gap-2"
+        >
+          <button>
+            <HiOutlineShoppingBag size={23} />
+          </button>
+          Purchased
         </Link>
         <li
           onClick={handleLogout}

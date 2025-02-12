@@ -5,6 +5,7 @@ import useGetUserById from "@/hooks/useGetUserById";
 import useLoadAvatarImage from "@/hooks/useLoadAvatarImage";
 import useLoadDraftImage from "@/hooks/useLoadDraftImage";
 import { useUser } from "@/hooks/useUser";
+import { useFormContext } from "@/providers/FormProvider";
 import { Draft } from "@/types";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import Image from "next/image";
@@ -30,6 +31,7 @@ const TracksCards: React.FC<TracksCardsProps> = ({ track }) => {
     year: "numeric",
   };
   const [isCard, setIsCard] = useState<boolean>(false);
+  const { formData, updateFormData } = useFormContext();
   const router = useRouter();
 
   const toggleCard = () => {
@@ -38,7 +40,7 @@ const TracksCards: React.FC<TracksCardsProps> = ({ track }) => {
 
   useEffect(() => {
     setIsCard(false);
-  }, [setIsCard]);
+  }, []);
 
   const deleteDraft = async () => {
     const { error } = await supabase.from("drafts").delete().eq("id", track.id);
@@ -51,17 +53,36 @@ const TracksCards: React.FC<TracksCardsProps> = ({ track }) => {
   };
 
   const handleEditClick = async () => {
+    // Try to update the draft status
     const { error } = await supabase
       .from("drafts")
       .update({ is_saved: false })
       .eq("id", track.id);
-
+  
     if (error) {
-      console.log("error edit");
-    } else {
-      router.replace("/content/tracks/new/files");
+      console.log("Error updating draft:", error.message);
     }
+  
+    // Always fetch the latest draft data
+    const { data: draftData, error: draftError } = await supabase
+      .from("drafts")
+      .select("*")
+      .eq("id", track.id)
+      .single();
+  
+    if (draftError) {
+      console.log("Error fetching draft metadata:", draftError.message);
+      return;
+    }
+  
+    if (draftData) {
+      updateFormData("beatinfo", { ...formData.beatinfo, ...draftData.metadata });
+    }
+  
+    // Navigate to the edit page
+    router.replace("/content/tracks/new/files");
   };
+  
 
   return (
     <div className="flex border overflow-hidden border-neutral-700/50 flex-col gap-y-5 bg-[#141414] p-1 rounded-md">
@@ -70,7 +91,7 @@ const TracksCards: React.FC<TracksCardsProps> = ({ track }) => {
           fill
           className="object-cover rounded-md"
           src={
-            draftImage && draftImage !== "null"
+            draftImage && draftImage !== null
               ? draftImage
               : avatarImage || "/images/partynextdoor.jpeg"
           }

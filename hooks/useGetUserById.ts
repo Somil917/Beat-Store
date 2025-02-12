@@ -22,7 +22,7 @@ const useGetUserById = (id?: string) => {
             .from('users')
             .select('*')
             .eq('id', id)
-            .single()
+            .maybeSingle()
 
             if(error){
                 setIsLoading(false)

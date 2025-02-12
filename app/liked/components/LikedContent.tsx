@@ -25,6 +25,14 @@ const LikedContent: React.FC<LikedContentProps> = ({ beats }) => {
     }
   }, [isLoading, user, router]);
 
+  const showShimmer = () => {
+    if(beats.length <= 10){
+      return beats.length;
+    }else{
+      return 10;
+    }
+  }
+
   return (
     <div>
       <div
@@ -46,7 +54,7 @@ const LikedContent: React.FC<LikedContentProps> = ({ beats }) => {
         <h1 className="2xl:text-2xl xl:text-2xl lg:2xl md:3xl text-3xl font-semibold">
           Favourites
         </h1>
-        <BeatCards className1="2xl:grid-cols-5" beats={beats} />
+        <BeatCards limit={showShimmer()} className1="2xl:grid-cols-5" beats={beats} />
       </div>
       <div
         className="

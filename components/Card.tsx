@@ -1,6 +1,5 @@
 "use client";
 
-import getLikedBeats from "@/actions/getLikedBeats";
 import useLoadBeatUrl from "@/hooks/useLoadBeatUrl";
 import { twMerge } from "tailwind-merge";
 import MediaItem from "./MediaItem";

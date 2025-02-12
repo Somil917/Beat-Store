@@ -25,7 +25,7 @@ const Banners = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative max-w-[1519px] m-auto">
       <Image
         src="/images/overlay.png"
         className="object-cover w-full h-full z-0 opacity-20 pointer-events-none"

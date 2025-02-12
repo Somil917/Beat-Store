@@ -8,13 +8,24 @@ const getLikedBeats = async (): Promise<Beat[]> => {
   });
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError) {
+    console.error("Error fetching user:", userError);
+    return [];
+  }
+
+  if (!user) {
+    console.warn("No authenticated user found");
+    return [];
+  }
 
   const { data, error } = await supabase
     .from("liked_beats")
     .select("*, beats(*)")
-    .eq("user_id", session?.user?.id)
+    .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
   if (error) {

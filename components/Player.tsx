@@ -28,7 +28,6 @@ const Player = () => {
         className="
         w-full
         flex
-        justify-center
         align-center
         border-t
         border-neutral-700/50
@@ -41,11 +40,13 @@ const Player = () => {
         <div
           className="
             bg-[#141414]
-            w-[90%]
+            w-[100%]
             py-2
             h-[80px]
-            md:px-4
-            px-0
+            max-w-[1519px]
+            m-auto
+            md:px-20
+            px-4
         "
         >
           <PlayerContent key={beatUrl} beat={beat} beatUrl={beatUrl} />

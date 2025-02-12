@@ -4,7 +4,7 @@ import useAuthModal from "@/hooks/useAuthModal";
 import { useUser } from "@/hooks/useUser";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { RiHeartFill, RiHeartLine } from "react-icons/ri";
 import { twMerge } from "tailwind-merge";
@@ -20,74 +20,68 @@ const LikeButton: React.FC<LikeButtonProps> = ({
 }) => {
     const router = useRouter();
 
-    const {user} = useUser();
+    const { user } = useUser();
     const { supabaseClient } = useSessionContext();
-    const [isLiked, setIsLiked] = useState(false)
+    const [isLiked, setIsLiked] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const authModal = useAuthModal();
 
-    useEffect(() => {
-      if(!user?.id){
-        return;
-      }
+    // Memoize the fetch function to prevent unnecessary re-requests
+    const fetchBeat = useCallback(async () => {
+        if (!user?.id) return;
 
-      const fetchBeat = async () => {
-        const {data, error} = await supabaseClient
-            .from('liked_beats')
+        const { data, error } = await supabaseClient
+            .from("liked_beats")
             .select("*")
-            .eq('user_id', user.id)
-            .eq('beat_id', beatId)
-            .single()
+            .eq("user_id", user.id)
+            .eq("beat_id", beatId)
+            .single();
 
-        if(!error && data){
-            setIsLiked(true)
+        if (!error && data) {
+            setIsLiked(true);
         }
-      }
-    
-      fetchBeat();
-    }, [beatId, supabaseClient, user?.id])
-    
+    }, [user?.id, beatId, supabaseClient]);
+
+    useEffect(() => {
+        // Only trigger fetch when user or beatId changes
+        if (!user?.id || !beatId) return;
+
+        fetchBeat(); // Fetch the like status for the given beatId
+    }, [beatId, user?.id, fetchBeat]);
+
     const Icon = isLiked ? RiHeartFill : RiHeartLine;
 
     const handleClick = async () => {
-        if(!user){
-            return authModal.onOpen();
+        if (!user) return authModal.onOpen();
+
+        setLoading(true);
+        setIsLiked((prev) => !prev); // Optimistic UI update
+
+        const { error } = isLiked
+            ? await supabaseClient.from('liked_beats').delete().eq('user_id', user.id).eq('beat_id', beatId)
+            : await supabaseClient.from('liked_beats').insert({ beat_id: beatId, user_id: user.id });
+
+        if (error) {
+            toast.error(error.message);
+            setIsLiked((prev) => !prev); // Revert on error
+        } else {
+            toast.success(isLiked ? 'Unliked!' : 'Liked!');
+            router.refresh();
         }
 
-        if(isLiked){
-            const {error} = await supabaseClient
-            .from('liked_beats')
-            .delete()
-            .eq('user_id', user.id)
-            .eq('beat_id', beatId)
+        setLoading(false);
+    };
 
-        if(error){
-            toast.error(error.message)
-        }else{
-            setIsLiked(false)
-        }
-        }else{
-            const {error} = await supabaseClient
-            .from('liked_beats')
-            .insert({
-                beat_id: beatId,
-                user_id: user.id
-            });
-            if(error){
-                toast.error(error.message)
-            }else{
-                setIsLiked(true)
-                toast.success('Liked!');
-            }
-        }
-        router.refresh();
-    }
-
-    return ( 
-        <button className={twMerge(``, className)} onClick={handleClick}>
-            <Icon color={isLiked ? "red" : "white"} size={19}/>
+    return (
+        <button
+            className={twMerge(className)}
+            onClick={handleClick}
+            disabled={loading}
+        >
+            <Icon color={isLiked ? "red" : "white"} size={19} />
         </button>
-     );
-}
- 
+    );
+};
+
 export default LikeButton;

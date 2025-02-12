@@ -7,6 +7,7 @@ import {
   upsertProductRecord,
   upsertPriceRecord,
   manageSubscriptionStatusChange,
+  recordBeatPurchase,
 } from "@/libs/supabaseAdmin";
 
 const relevantEvents = new Set([
@@ -31,7 +32,7 @@ export async function POST(request: Request) {
     if (!sig || !webhooksSecret) return;
     event = stripe.webhooks.constructEvent(body, sig, webhooksSecret);
   } catch (error: any) {
-    console.log("Error message: " + error.message);
+    console.log("Error verifying webhook signature:", error.message);
     return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 });
   }
 
@@ -42,10 +43,12 @@ export async function POST(request: Request) {
         case "product.updated":
           await upsertProductRecord(event.data.object as Stripe.Product);
           break;
+
         case "price.created":
         case "price.updated":
           await upsertPriceRecord(event.data.object as Stripe.Price);
           break;
+
         case "customer.subscription.created":
         case "customer.subscription.updated":
         case "customer.subscription.deleted":
@@ -53,26 +56,54 @@ export async function POST(request: Request) {
           await manageSubscriptionStatusChange(
             subscription.id,
             subscription.customer as string,
-            event.type === "customer.subscription.created",
+            event.type === "customer.subscription.created"
           );
           break;
+
         case "checkout.session.completed":
           const checkoutSession = event.data.object as Stripe.Checkout.Session;
+
           if (checkoutSession.mode === "subscription") {
-            const subscriptionId = checkoutSession.subscription;
+            // Handle subscription checkout
+            const subscriptionId = checkoutSession.subscription as string;
             await manageSubscriptionStatusChange(
-              subscriptionId as string,
+              subscriptionId,
               checkoutSession.customer as string,
               true
             );
+          } else if (checkoutSession.mode === "payment") {
+            // Handle one-time beat purchase
+
+            const amountPaid = checkoutSession.amount_total ? checkoutSession.amount_total / 100 : 0;
+
+            const metadata = checkoutSession.metadata;
+            const beatId = metadata?.beatId;  // Access beatId from metadata
+            const userId = metadata?.userId;  // Access userId from metadata
+            const paymentStatus = checkoutSession.payment_status;
+            const sessionId = checkoutSession.id;
+
+            if (beatId && userId) {
+              const paymentId = checkoutSession.payment_intent as string;
+              await recordBeatPurchase(
+                sessionId,
+                paymentId,
+                userId,
+                beatId,
+                amountPaid,
+                paymentStatus,
+              );
+            } else {
+              console.error("Missing required metadata for beat purchase");
+            }
           }
           break;
+
         default:
-          throw new Error("unhandeled relevant Event");
+          console.log(`Unhandled event type: ${event.type}`);
       }
-    } catch (error) {
-      console.error(error);
-      return new NextResponse("Webhook error", { status: 400 });
+    } catch (error: any) {
+      console.error("Error processing event:", error.message);
+      return new NextResponse("Webhook handler error", { status: 500 });
     }
   }
 

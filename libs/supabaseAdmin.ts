@@ -187,9 +187,56 @@ const manageSubscriptionStatusChange = async (
   }
 };
 
+// New function for handling beat purchases
+const recordBeatPurchase = async (
+  sessionId: string,
+  paymentId: string,
+  userId: string,
+  beatId: string,
+  amountPaid: number,
+  paymentStatus: string
+) => {
+  // const payment = await stripe.paymentIntents.retrieve(paymentId, {
+  //   expand: ["payment_method", "invoice"],
+  // });
+
+  const session = await stripe.checkout.sessions.retrieve(sessionId, {
+    expand: ["payment_intent"],
+  });
+
+  // if (!session.line_items?.data[0]?.price?.id) {
+  //   return;
+  // }
+
+  const { payment_intent } = session;
+
+  if(!payment_intent){
+    return;
+  }
+
+  const { error } = await supabaseAdmin.from("beat_purchases").insert([
+    {
+      id: paymentId,
+      user_id: userId,
+      beat_id: beatId,
+      amount_paid: amountPaid,
+      license_type: "Basic MP3",
+      payment_status: paymentStatus,
+    },
+  ]);
+
+  if (error) {
+    console.error("Error recording beat purchase:", error);
+    throw error;
+  }
+
+  console.log(`Beat purchase recorded for user ${userId} and beat ${beatId}`);
+};
+
 export {
   upsertProductRecord,
   upsertPriceRecord,
   createOrRetrieveCustomer,
   manageSubscriptionStatusChange,
+  recordBeatPurchase,
 };

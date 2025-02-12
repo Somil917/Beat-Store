@@ -31,6 +31,8 @@ const Footer = () => {
       className="
         bg-[#0e0e0d] py-8 md:px-28 px-11
         min-h-[50%]
+        max-w-[1519px]
+        m-auto
         "
     >
       <div

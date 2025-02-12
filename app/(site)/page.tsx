@@ -10,7 +10,6 @@ export const revalidate = 0;
 export default function Home() {
   return (
     <>
-      {/* <Navbar href="liked"/> */}
       <Hero />
       <Beatssection
         href="topcharts"
@@ -18,11 +17,11 @@ export default function Home() {
         title="Trending Tracks"
       />
       <Banners/>
-      <Beatssection
+      {/* <Beatssection
         href="genres"
         navigate="See more"
         title="Popular Genres"
-      />
+      /> */}
       <Footer/>
     </>
   );

@@ -12,10 +12,12 @@ const useLoadAvatarImage = (userDetails: UserDetails) => {
     .from("images")
     .getPublicUrl(userDetails.avatar_url);
 
-  const cacheBuster = `?v=${new Date().getTime()}`;
-  const avatarUrlWithCacheBuster = imageData.publicUrl + cacheBuster;
 
-  return avatarUrlWithCacheBuster;
+  // commented this cache buster part but it can be a cause you want to fix so try to uncomment and check
+  // const cacheBuster = `?v=${new Date().getTime()}`;
+  // const avatarUrlWithCacheBuster = imageData.publicUrl + cacheBuster;
+
+  return imageData.publicUrl;
 };
 
 export default useLoadAvatarImage;

@@ -7,6 +7,14 @@ import React from "react";
 const TopCharts = async () => {
   const beats = await getBeats();
 
+  const showShimmer = () => {
+    if (beats.length <= 10) {
+      return beats.length;
+    } else {
+      return 10;
+    }
+  };
+
   return (
     <>
       {/* <Navbar/> */}
@@ -27,6 +35,7 @@ const TopCharts = async () => {
           Trending Tracks
         </h1>
         <BeatCards
+          limit={showShimmer()}
           className1="2xl:grid-cols-5 grid"
           className2="hidden"
           beats={beats}

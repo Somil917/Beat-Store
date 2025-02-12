@@ -20,7 +20,7 @@ const Hero = () => {
 
   return (
     <>
-      <div className="hidden md:block mt-28 lg:py-20 2xl:py-20 md:py-12 md:px-12 xl:px-24 lg:px-14 2xl:px-32 bg-[#0e0e0d] relative overflow-hidden">
+      <div className="hidden max-w-[1519px] m-auto md:block mt-28 lg:py-20 2xl:py-20 md:py-12 md:px-12 xl:px-24 lg:px-14 2xl:px-32 bg-[#0e0e0d] relative overflow-hidden">
         <h1
           style={myFont.style}
           className=" z-50 md:text-7xl lg:text-[92px] xl:text-8xl 2xl:text-9xl mb-16 font-extrabold font-sans uppercase"

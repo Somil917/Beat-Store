@@ -1,4 +1,5 @@
-import { Price } from "@/types";
+import { Beat, Price } from "@/types";
+import {stripe} from "@/libs/stripe"
 
 export const getURL = () => {
   let url =
@@ -14,10 +15,10 @@ export const getURL = () => {
 
 export const postData = async ({
   url,
-  data,
+  data
 }: {
   url: string;
-  data?: { price: Price };
+  data?: { price?: Price, beat?: Beat, purchaseType: string, metadata?: { beatId: string } };
 }) => {
   console.log("POST REQUEST:", url, data);
 
@@ -25,7 +26,7 @@ export const postData = async ({
     method: "POST",
     headers: new Headers({ "Content-Type": "application/json" }),
     credentials: "same-origin",
-    body: JSON.stringify(data),
+    body: JSON.stringify(data)
   });
 
   if (!res.ok) {
@@ -36,6 +37,21 @@ export const postData = async ({
 
   return res.json();
 };
+
+export const createProductAndPriceId = async (beat: Beat) => {
+  const product = await stripe.products.create({
+    name: beat.title, // Name of the beat
+    description: beat.author,
+  });
+
+  const price = await stripe.prices.create({
+    unit_amount: beat.bpm * 100, // Price in cents, e.g., $50.00
+    currency: "usd",
+    product: product.id, // Associate with the created product
+  });
+
+  return price as Price;
+}
 
 export const toDateTime = (secs: number) => {
   var t = new Date("1970-01-01T00:30:00Z");

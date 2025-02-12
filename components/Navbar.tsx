@@ -107,21 +107,27 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
   }, [pathname]);
 
   return (
-    <div className="flex flex-col w-full h-[65px] fixed top-0 left-0 z-20 ">
+    <div
+      className="flex flex-col 
+                bg-[#141414]
+                
+                border-b
+              border-neutral-700/50
+                w-full h-[65px] fixed top-0 left-0 z-20 "
+    >
       <div
         className={`
                 flex
                 flex-row
                 items-center
                 justify-between
+                max-w-[1519px]
+                m-auto
                 ${
                   shouldNotShow
                     ? "px-5"
-                    : "px-4 md:px-10 lg:px-10 xl:px-20 2xl:px-28"
+                    : "px-4 md:px-10 lg:px-10 xl:px-20 2xl:px-20"
                 }
-                bg-[#141414]
-                border-b
-              border-neutral-700/50
                 w-full
                 py-3
         `}
@@ -175,6 +181,7 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
             <div className="flex justify-between items-center 2xl:text-sm text-xs md:gap-x-1 gap-x-2.5 2xl:gap-3 text-neutral-400 font-medium">
               {!shouldNotShow && (
                 <button
+                  // href={"/content/tracks/new/files"}
                   onClick={onClick}
                   className="hidden md:block rounded-sm mr-1 lg:mr-4 xl:mr-4 2xl:mr-5 md:mr-4 font-bold px-3 py-1 text-gray-700 hover:text-gray-950 bg-slate-200 transition hover:bg-slate-100"
                 >

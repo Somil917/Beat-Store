@@ -6,6 +6,7 @@ import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import useSaveDiscardDraftModal from "@/hooks/useSaveDiscardDraftModal";
 import { IoMdAdd } from "react-icons/io";
+import { useRouter } from "next/navigation";
 
 interface CancelTrackProps {
   uploadedRoute?: boolean;
@@ -13,6 +14,7 @@ interface CancelTrackProps {
 
 const CancelTrack: React.FC<CancelTrackProps> = ({ uploadedRoute }) => {
   const { isOpen, onOpen } = useSaveDiscardDraftModal();
+  const router = useRouter();
 
   return (
     <div className="w-full px-6 sm:px-16 py-4 bg-[#141414]">
@@ -29,7 +31,7 @@ const CancelTrack: React.FC<CancelTrackProps> = ({ uploadedRoute }) => {
             <div className="cursor-pointer">Uploaded</div>
             <div className="px-3 flex items-center gap-x-1 py-[3px] text-[13px] bg-blue-600 hover:bg-blue-500/90 cursor-pointer rounded-md">
               <IoMdAdd size={20} />
-              <div>Add Track</div>
+              <div onClick={() => router.replace('/content/tracks/new/files')}>Add Track</div>
             </div>
           </div>
         )}

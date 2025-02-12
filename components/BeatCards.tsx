@@ -5,6 +5,7 @@ import BeatItem from "./BeatItem";
 import { twMerge } from "tailwind-merge";
 import usePlayer from "@/hooks/usePlayer";
 import useOnPlay from "@/hooks/useOnPlay";
+import { useEffect, useState } from "react";
 
 interface BeatCardsProps {
   beats: Beat[];
@@ -21,11 +22,36 @@ const BeatCards: React.FC<BeatCardsProps> = ({
 }) => {
   const onPlay = useOnPlay(beats);
 
+  const [loading, setLoading] = useState(true);
+  const [fetchedBeats, setFetchedBeats] = useState<Beat[]>([]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setFetchedBeats(beats);
+      setLoading(false);
+    }, 1000);
+  }, [beats]);
+
   if (beats.length === 0) {
     return <div className="mt-4 text-neutral-400">No songs available.</div>;
   }
 
-  const limitedCards = beats.slice(0, limit);
+  const renderShimmer = () => (
+    <div className="flex p-[16px] justify-center transition">
+      <div className="w-[189px] rounded-md">
+        <div className="w-full rounded-md shimmer bg-neutral-800 h-[189px]"></div>
+        <div className="h-[68px] mt-3 flex flex-col gap-2">
+          <div className="w-1/2 h-[20px] rounded-md shimmer bg-neutral-800"></div>
+          <div className="w-full h-[20px] flex gap-2">
+            <div className="w-1/3 rounded-md shimmer bg-neutral-800 h-full"></div>
+            <div className="w-1/3 rounded-md shimmer bg-neutral-800 h-full"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const limitedCards = fetchedBeats.slice(0, limit);
 
   return (
     <>
@@ -45,13 +71,17 @@ const BeatCards: React.FC<BeatCardsProps> = ({
           className1
         )}
       >
-        {limitedCards.map((item) => (
-          <BeatItem
-            key={item.id}
-            data={item}
-            onClick={(id: string) => onPlay(id)}
-          />
-        ))}
+        {loading
+          ? Array.from({ length: limit || 6 }).map((_, index) => (
+              <div key={index}>{renderShimmer()}</div>
+            ))
+          : limitedCards.map((item) => (
+              <BeatItem
+                key={item.id}
+                data={item}
+                onClick={(id: string) => onPlay(id)}
+              />
+            ))}
       </div>
       <div
         className={twMerge(

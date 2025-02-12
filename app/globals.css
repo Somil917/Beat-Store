@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-html, 
-body, 
-:root{
+html,
+body,
+:root {
   height: 100%;
   color-scheme: dark;
   background-color: #1e1e1d;
@@ -25,6 +25,43 @@ input[type="number"] {
   -moz-appearance: textfield; /* Firefox */
 }
 
+.trackSeekbar {
+  appearance: none;
+  background: linear-gradient(
+    to right,
+    #fff 0%,
+    #fff var(--progress),
+    transparent var(--progress),
+    transparent 100%
+  );
+}
+
+.trackSeekbar:hover{
+  background: linear-gradient(
+    to right,
+    rgb(29 78 216) 0%,
+    rgb(29 78 216) var(--progress),
+    #404040 var(--progress),
+    #404040 100%
+  );
+}
+
+.trackSeekbar::-webkit-slider-thumb {
+  appearance: none;
+  position: relative;
+  width: 0px;
+  height: 0px;
+  border-radius: 50%;
+  background-color: #fff;
+  cursor: grab;
+  transition: 0.2s ease-in-out;
+}
+
+.trackSeekbar:hover::-webkit-slider-thumb {
+  width: 17px;
+  height: 17px;
+}
+
 .scrollbar-no-arrows::-webkit-scrollbar {
   width: 7px;
   height: 8px;
@@ -40,10 +77,10 @@ input[type="number"] {
 }
 
 .scrollbar-no-arrows::-webkit-scrollbar-button {
-  display: none; 
+  display: none;
 }
 
-.circular-border{
+.circular-border {
   content: "";
   position: absolute;
   top: 0;
@@ -62,4 +99,25 @@ input[type="number"] {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Edge */
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+.shimmer {
+  display: inline-block;
+  background: linear-gradient(
+    to right,
+    rgb(38 38 38) 0%,
+    rgb(82 82 82) 50%,
+    rgb(38 38 38) 100%
+  );
+  background-size: 200% 50%;
+  animation: shimmer 1s infinite;
 }
