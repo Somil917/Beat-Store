@@ -16,7 +16,7 @@ const Dashboard = async () => {
 
   return (
     <>
-      <div className="hidden md:flex w-full bg-[#090909] items-start md:p-10 md:py-28 xl:py-28 xl:px-20 justify-between gap-3">
+      <div className="hidden md:flex w-full mt-4 min-h-screen max-w-[1519px] m-auto bg-[#090909] items-start md:p-10 md:py-28 xl:py-28 xl:px-20 justify-between gap-3">
         <UserEditWrapper />
         <UserBeats beats={data} />
       </div>

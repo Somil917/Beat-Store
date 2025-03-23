@@ -10,9 +10,9 @@ const Info = () => {
       <SaveDiscardDraftModal />
       <CancelTrack />
       <div className="scrollbar-no-arrows w-full overflow-y-auto h-full max-h-[calc(100vh-65px)] bg-[#090909] flex flex-col items-center pb-32 pt-16">
-        <div className="text-xl mb-4 text-start 2xl:w-[50%] xl:w-[55%] lg:w-[60%] md:w-[80%] w-[90%]">
+        <div className="text-xl max-w-[1519px] mx-auto mb-4 text-start 2xl:w-[50%] xl:w-[55%] lg:w-[60%] md:w-[80%] w-[90%]">
           Beat Details
-          <span className="text-lg text-neutral-400"> - Step 2 of 3</span>
+          <span className="text-lg text-neutral-400"> - Step 2 of 4</span>
         </div>
         <BeatInfo />
       </div>

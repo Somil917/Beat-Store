@@ -192,6 +192,7 @@ const recordBeatPurchase = async (
   sessionId: string,
   paymentId: string,
   userId: string,
+  license_type: string,
   beatId: string,
   amountPaid: number,
   paymentStatus: string
@@ -210,18 +211,18 @@ const recordBeatPurchase = async (
 
   const { payment_intent } = session;
 
-  if(!payment_intent){
+  if (!payment_intent) {
     return;
   }
 
   const { error } = await supabaseAdmin.from("beat_purchases").insert([
     {
-      id: paymentId,
       user_id: userId,
       beat_id: beatId,
       amount_paid: amountPaid,
-      license_type: "Basic MP3",
+      license_type: license_type,
       payment_status: paymentStatus,
+      payment_id: paymentId,
     },
   ]);
 

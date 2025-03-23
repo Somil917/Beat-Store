@@ -6,6 +6,8 @@ import { twMerge } from "tailwind-merge";
 import usePlayer from "@/hooks/usePlayer";
 import useOnPlay from "@/hooks/useOnPlay";
 import { useEffect, useState } from "react";
+import useGetPurchasedBeats from "@/hooks/useGetPurchasedBeats";
+import { useUser } from "@/hooks/useUser";
 
 interface BeatCardsProps {
   beats: Beat[];
@@ -20,6 +22,9 @@ const BeatCards: React.FC<BeatCardsProps> = ({
   className2,
   limit,
 }) => {
+  const { user } = useUser();
+  const { purchasedBeatsDetails } = useGetPurchasedBeats(user?.id);
+
   const onPlay = useOnPlay(beats);
 
   const [loading, setLoading] = useState(true);
@@ -77,6 +82,7 @@ const BeatCards: React.FC<BeatCardsProps> = ({
             ))
           : limitedCards.map((item) => (
               <BeatItem
+                purchasedBeatsDetails={purchasedBeatsDetails}
                 key={item.id}
                 data={item}
                 onClick={(id: string) => onPlay(id)}
@@ -98,16 +104,21 @@ const BeatCards: React.FC<BeatCardsProps> = ({
           className2
         )}
       >
-        {limitedCards.map((item) => (
-          <div key={item.id} className="flex-shrink-0 w-[180px]">
-            <BeatItem
-              className="p-3"
-              key={item.id}
-              data={item}
-              onClick={(id: string) => onPlay(id)}
-            />
-          </div>
-        ))}
+        {loading
+          ? Array.from({ length: limit || 6 }).map((_, index) => (
+              <div key={index}>{renderShimmer()}</div>
+            ))
+          : limitedCards.map((item) => (
+              <div key={item.id} className="flex-shrink-0 w-[180px]">
+                <BeatItem
+                  purchasedBeatsDetails={purchasedBeatsDetails}
+                  className="p-3"
+                  key={item.id}
+                  data={item}
+                  onClick={(id: string) => onPlay(id)}
+                />
+              </div>
+            ))}
       </div>
     </>
   );

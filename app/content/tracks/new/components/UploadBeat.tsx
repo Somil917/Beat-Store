@@ -12,8 +12,10 @@ import { useDraftStore } from "@/hooks/useDraftStore";
 import DraftAudioPlayer from "./DraftAudioPlayer";
 import { TbReplace } from "react-icons/tb";
 import Image from "next/image";
+import useProtectUploadRoute from "@/hooks/useProtectUploadRoute";
 
 const UploadBeat = () => {
+  useProtectUploadRoute();
   const { formData, updateFormData } = useFormContext();
   const router = useRouter();
   const trackDetailsUploadModal = useTrackDetailsUpload();
@@ -46,7 +48,7 @@ const UploadBeat = () => {
   };
 
   return (
-    <div className=" bg-[#141414] px-8 py-5 2xl:w-[50%] xl:w-[55%] lg:w-[60%] md:w-[80%] w-[90%] rounded-md border border-neutral-700/50">
+    <div className=" bg-[#141414] max-w-[1519px] mx-auto px-8 py-5 2xl:w-[50%] xl:w-[55%] lg:w-[60%] md:w-[80%] w-[90%] rounded-md border border-neutral-700/50">
       <div className="flex flex-col gap-y-6  h-full">
         <NavigateRoutes />
         <form className="flex flex-col gap-y-5">

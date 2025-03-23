@@ -74,27 +74,41 @@ export async function POST(request: Request) {
           } else if (checkoutSession.mode === "payment") {
             // Handle one-time beat purchase
 
-            const amountPaid = checkoutSession.amount_total ? checkoutSession.amount_total / 100 : 0;
+            const amountPaid = checkoutSession.amount_total
+              ? checkoutSession.amount_total / 100
+              : 0;
 
             const metadata = checkoutSession.metadata;
-            const beatId = metadata?.beatId;  // Access beatId from metadata
-            const userId = metadata?.userId;  // Access userId from metadata
+            // const beatId = metadata?.beatId;  // Access beatId from metadata
+            const userId = metadata?.userId; // Access userId from metadata
+            // const license_type = metadata?.license_type;  // Access license_type from metadata
+
+            if (!metadata?.licenses || !userId) {
+              console.error("Missing required metadata for beat purchase");
+              return new NextResponse("Missing metadata", { status: 400 });
+            }
+
+            const licenses = JSON.parse(metadata.licenses);
+
             const paymentStatus = checkoutSession.payment_status;
             const sessionId = checkoutSession.id;
+            const paymentId = checkoutSession.payment_intent as string;
 
-            if (beatId && userId) {
-              const paymentId = checkoutSession.payment_intent as string;
+            for (const license of licenses) {
               await recordBeatPurchase(
                 sessionId,
                 paymentId,
                 userId,
-                beatId,
-                amountPaid,
-                paymentStatus,
+                license.license_type,
+                license.beatId,
+                license.beatPrice,
+                paymentStatus
               );
-            } else {
-              console.error("Missing required metadata for beat purchase");
             }
+
+            console.log(
+              `Successfully recorded ${licenses.length} beat purchases.`
+            );
           }
           break;
 

@@ -3,7 +3,7 @@ import { create } from "zustand";
 interface DraftState {
   isCoverFetching: boolean;
   isAudioFetching: boolean;
-  draftId: number | null;
+  draftId: string | null;
   isCoverLoading: boolean;
   coverArt: string | null;
   audioFile: string | null;
@@ -12,7 +12,7 @@ interface DraftState {
   } | null;
   setIsCoverFetching: (bool: boolean) => void;
   setIsAudioFetching: (bool: boolean) => void;
-  setDraftId: (id: number | null) => void;
+  setDraftId: (id: string | null) => void;
   setIsCoverLoading: (bool: boolean) => void;
   setCoverArt: (cover_public_url: string | null) => void;
   setAudioFile: (beat: string | null) => void;
@@ -35,5 +35,5 @@ export const useDraftStore = create<DraftState>((set) => ({
   setCoverArt: (url) => set({ coverArt: url }),
   setAudioFile: (beat) => set({ audioFile: beat }),
   setMetaData: (data) => set({ metadata: data }),
-  clearDraft: () => set({ coverArt: null, audioFile: null, metadata: null }),
+  clearDraft: () => set({ coverArt: null, audioFile: null, metadata: null, draftId: null }),
 }));

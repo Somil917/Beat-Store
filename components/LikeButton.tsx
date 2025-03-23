@@ -1,87 +1,89 @@
 "use client";
 
 import useAuthModal from "@/hooks/useAuthModal";
+import { useLikedBeats } from "@/hooks/useLikedBeats";
 import { useUser } from "@/hooks/useUser";
+import { Beat } from "@/types";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { RiHeartFill, RiHeartLine } from "react-icons/ri";
 import { twMerge } from "tailwind-merge";
 
 interface LikeButtonProps {
-    beatId: string;
-    className?: string;
+  beatId: string;
+  beat?: Beat;
+  className?: string;
 }
 
-const LikeButton: React.FC<LikeButtonProps> = ({
-    beatId,
-    className,
-}) => {
-    const router = useRouter();
+const LikeButton: React.FC<LikeButtonProps> = ({ beatId, beat, className }) => {
+  const router = useRouter();
 
-    const { user } = useUser();
-    const { supabaseClient } = useSessionContext();
-    const [isLiked, setIsLiked] = useState(false);
-    const [loading, setLoading] = useState(false);
+  const { user } = useUser();
+  const { supabaseClient } = useSessionContext();
+  // const [isLiked, setIsLiked] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-    const authModal = useAuthModal();
+  const authModal = useAuthModal();
 
-    // Memoize the fetch function to prevent unnecessary re-requests
-    const fetchBeat = useCallback(async () => {
-        if (!user?.id) return;
+  const { likedBeats, likeBeat, dislikeBeat } = useLikedBeats();
 
-        const { data, error } = await supabaseClient
-            .from("liked_beats")
-            .select("*")
-            .eq("user_id", user.id)
-            .eq("beat_id", beatId)
-            .single();
+  const isLiked = useMemo(() => {
+    return likedBeats.some((b) => b.id === beatId);
+  }, [likedBeats, beatId]);
 
-        if (!error && data) {
-            setIsLiked(true);
-        }
-    }, [user?.id, beatId, supabaseClient]);
+  const Icon = isLiked ? RiHeartFill : RiHeartLine;
 
-    useEffect(() => {
-        // Only trigger fetch when user or beatId changes
-        if (!user?.id || !beatId) return;
+  const handleClick = async () => {
+    if (!user) return authModal.onOpen("sign_in");
 
-        fetchBeat(); // Fetch the like status for the given beatId
-    }, [beatId, user?.id, fetchBeat]);
+    setLoading(true);
 
-    const Icon = isLiked ? RiHeartFill : RiHeartLine;
+    let error;
+    if (isLiked) {
+      dislikeBeat(beatId);
+      const { error: deleteError } = await supabaseClient
+        .from("liked_beats")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("beat_id", beatId);
 
-    const handleClick = async () => {
-        if (!user) return authModal.onOpen();
+      error = deleteError;
+      if (deleteError) {
+        likeBeat(beat!);
+      }
+    } else {
+      likeBeat(beat!);
+      const { error: insertError } = await supabaseClient
+        .from("liked_beats")
+        .insert({ beat_id: beatId, user_id: user.id });
 
-        setLoading(true);
-        setIsLiked((prev) => !prev); // Optimistic UI update
+      error = insertError;
+      if (insertError) {
+        dislikeBeat(beatId);
+      }
+    }
 
-        const { error } = isLiked
-            ? await supabaseClient.from('liked_beats').delete().eq('user_id', user.id).eq('beat_id', beatId)
-            : await supabaseClient.from('liked_beats').insert({ beat_id: beatId, user_id: user.id });
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success(isLiked ? "Unliked!" : "Liked!");
+      // router.refresh();
+    }
 
-        if (error) {
-            toast.error(error.message);
-            setIsLiked((prev) => !prev); // Revert on error
-        } else {
-            toast.success(isLiked ? 'Unliked!' : 'Liked!');
-            router.refresh();
-        }
+    setLoading(false);
+  };
 
-        setLoading(false);
-    };
-
-    return (
-        <button
-            className={twMerge(className)}
-            onClick={handleClick}
-            disabled={loading}
-        >
-            <Icon color={isLiked ? "red" : "white"} size={19} />
-        </button>
-    );
+  return (
+    <button
+      className={twMerge(className)}
+      onClick={handleClick}
+      disabled={loading}
+    >
+      <Icon color={isLiked ? "red" : "white"} size={19} />
+    </button>
+  );
 };
 
 export default LikeButton;

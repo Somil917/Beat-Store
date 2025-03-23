@@ -18,6 +18,8 @@ import NavBarWrapper from "@/components/NavbarWrapper";
 import { FormProvider } from "@/providers/FormProvider";
 import { usePathname } from "next/navigation";
 import getActiveProductsWithPrices from "@/actions/getActiveProductsWithPrices";
+import getCartItems from "@/actions/getCartItems";
+import LikedBeatsProvider from "@/providers/LikedBeatsProvider";
 
 const font = Figtree({ subsets: ["latin"] });
 
@@ -31,8 +33,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const likedBeats = await getLikedBeats();
   const products = await getActiveProductsWithPrices();
+  const cartItems = await getCartItems();
 
   return (
     <html lang="en">
@@ -43,7 +45,8 @@ export default async function RootLayout({
           <UserProvider>
             <ModalProvider products={products} />
             <FormProvider>
-              <NavBarWrapper beats={likedBeats} />
+              <LikedBeatsProvider />
+              <NavBarWrapper cartItems={cartItems} />
               {/* <Hero /> */}
               {children}
               {/* <Beatssection href="topcharts" title="Top Generes" navigate="See More"/> */}

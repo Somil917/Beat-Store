@@ -27,7 +27,7 @@ const MediaItem: React.FC<MediaItemProps> = ({ data, onClick, className }) => {
         `
             flex
             items-center
-            gap-x-5
+            gap-x-4
             rounded-md
             p-2
             overflow-hidden

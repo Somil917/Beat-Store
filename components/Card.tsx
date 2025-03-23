@@ -1,55 +1,38 @@
 "use client";
 
-import useLoadBeatUrl from "@/hooks/useLoadBeatUrl";
 import { twMerge } from "tailwind-merge";
-import MediaItem from "./MediaItem";
-import { Beat } from "@/types";
-import LikedContent from "@/app/liked/components/LikedContent";
-import LikeButton from "./LikeButton";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 interface CardProps {
+  setIsCardOpen?: (isOpen: boolean) => void; // Ensure it's a function
   className?: string;
   children?: React.ReactNode;
 }
 
-const Card: React.FC<CardProps> = ({ className, children }) => {
+const Card: React.FC<CardProps> = ({ setIsCardOpen, className, children }) => {
+  const cardRef = useRef<HTMLDivElement | null>(null);
 
-    const router = useRouter();
-    const pathname = usePathname();
-    const [isOpen, setIsOpen] = useState(true)
-    const cardRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    // Function to handle clicks outside the card
+    const handleClickOutside = (event: MouseEvent) => {
+      if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
+        setTimeout(() => {
+          setIsCardOpen!(false);
+        }, 200); // Small delay to prevent immediate reopen on mouseup
+      }
+    };
 
+    // Add event listener to detect clicks outside
+    document.addEventListener("mousedown", handleClickOutside);
 
-    // useEffect(() => {
-    //       if (pathname === '/liked') {
-    //         setIsOpen(false); // Close the card when navigating to /liked
-    //     }
-        
-    // }, [pathname]);
-
-    useEffect(() => {
-        // Function to handle clicks outside the card
-        const handleClickOutside = (event: MouseEvent) => {
-          if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
-            setIsOpen(false); // Close the card if clicked outside
-          }
-        };
-    
-        // Add the event listener to the document
-        document.addEventListener("mousedown", handleClickOutside);
-    
-        // Cleanup the event listener on unmount
-        return () => {
-          document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [setIsCardOpen]); // Depend on setIsCardOpen to avoid stale closure
 
   return (
-    isOpen && (
     <div
-        ref={cardRef}
+      ref={cardRef}
       className={twMerge(
         `
         w-[350px]
@@ -75,8 +58,7 @@ const Card: React.FC<CardProps> = ({ className, children }) => {
     >
       {children}
     </div>
-  )
-    )
-}
+  );
+};
 
 export default Card;

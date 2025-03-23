@@ -2,6 +2,8 @@ import getBeats from "@/actions/getBeats";
 import BeatCards from "./BeatCards";
 import Link from "next/link";
 import React from "react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export const revalidate = 0;
 
@@ -16,7 +18,7 @@ const Beatssection: React.FC<BeatssectionProps> = async ({
   navigate,
   href,
 }) => {
-  const beats = await getBeats();
+  const beats = await getBeats(6);
 
   return (
     <>

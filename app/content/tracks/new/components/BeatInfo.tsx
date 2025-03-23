@@ -13,8 +13,10 @@ import { useDraftStore } from "@/hooks/useDraftStore";
 import { ClipLoader } from "react-spinners";
 import { IoInformationCircleOutline } from "react-icons/io5";
 import { IoIosArrowDown } from "react-icons/io";
+import useProtectUploadRoute from "@/hooks/useProtectUploadRoute";
 
 const BeatInfo = () => {
+  useProtectUploadRoute();
   const { formData, updateFormData } = useFormContext();
   const router = useRouter();
   const trackDetailsUploadModal = useTrackDetailsUpload();
@@ -162,7 +164,7 @@ const BeatInfo = () => {
   };
 
   return (
-    <div className=" bg-[#141414] px-8 py-5 2xl:w-[50%] xl:w-[55%] lg:w-[60%] md:w-[80%] w-[90%] rounded-md border border-neutral-700/50">
+    <div className=" bg-[#141414] max-w-[1519px] mx-auto px-8 py-5 2xl:w-[50%] xl:w-[55%] lg:w-[60%] md:w-[80%] w-[90%] rounded-md border border-neutral-700/50">
       <div className="flex  w-full flex-col gap-y-6 h-full">
         <NavigateRoutes />
         <form className="w-full flex flex-col md:flex-row justify-center items-center md:items-start gap-x-8">
@@ -391,7 +393,7 @@ const BeatInfo = () => {
           </button>
           <button
             onClick={() => {
-              router.replace("review");
+              router.replace("licenses");
             }}
             className="px-4 hover:bg-neutral-700 active:outline active:outline-[6px] active:outline-neutral-800 py-1 rounded-md border border-neutral-700/50 bg-neutral-800"
           >

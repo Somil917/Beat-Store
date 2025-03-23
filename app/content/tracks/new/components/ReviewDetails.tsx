@@ -11,8 +11,10 @@ import toast from "react-hot-toast";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useUser } from "@/hooks/useUser";
 import useGetUserById from "@/hooks/useGetUserById";
+import useProtectUploadRoute from "@/hooks/useProtectUploadRoute";
 
 const ReviewDetails = () => {
+  useProtectUploadRoute();
   const { formData } = useFormContext();
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
@@ -39,7 +41,22 @@ const ReviewDetails = () => {
       formData.beatinfo.tags.length < 3 ||
       formData.beatinfo.genres.length < 3
     ) {
-      return toast.error("Please fill the required fields.");
+      const missingFields = [];
+      if (!userDetails?.display_name) missingFields.push("Display Name");
+      if (!user) missingFields.push("User");
+      if (!draftId) missingFields.push("Draft ID");
+      if (!coverArt) missingFields.push("Cover Art");
+      if (!audioFile) missingFields.push("Audio File");
+      if (!formData.beatinfo.title) missingFields.push("Title");
+      if (!formData.beatinfo.bpm) missingFields.push("BPM");
+      if (formData.beatinfo.tags.length < 3)
+        missingFields.push("Tags (minimum 3)");
+      if (formData.beatinfo.genres.length < 3)
+        missingFields.push("Genres (minimum 3)");
+
+      return toast.error(
+        `Please fill the required fields: ${missingFields.join(", ")}`
+      );
     }
 
     try {
@@ -73,6 +90,43 @@ const ReviewDetails = () => {
         return toast.error(supabaseError.message);
       }
 
+      const { data: beatId, error: beatIdError } = await supabase
+        .from("beats")
+        .select("id")
+        .eq("title", formData.beatinfo.title)
+        .eq("user_id", user.id)
+        .single();
+
+      if (beatIdError) {
+        setIsPublishing(false);
+        return toast.error(beatIdError.message);
+      }
+
+      if (!beatId) {
+        setIsPublishing(false);
+        return toast.error("Failed to fetch beatId");
+      }
+
+      const activeLicenses = formData.pricing.filter(
+        (license) => license.isApplied
+      );
+
+      const licensesWithBeatId = activeLicenses.map((license) => ({
+        license_type: license.license_type,
+        price: license.price,
+        policies: license.policies,
+        beat_id: beatId.id,
+      }));
+
+      const { error: licenseInsertError } = await supabase
+        .from("licenses")
+        .insert(licensesWithBeatId);
+
+      if (licenseInsertError) {
+        setIsPublishing(false);
+        return toast.error(licenseInsertError.message);
+      }
+
       const { error: draftUpdateError } = await supabase
         .from("drafts")
         .update({
@@ -100,7 +154,7 @@ const ReviewDetails = () => {
   };
 
   return (
-    <div className=" bg-[#141414] px-8 py-5 2xl:w-[50%] xl:w-[55%] lg:w-[60%] md:w-[80%] w-[90%] rounded-md border border-neutral-700/50">
+    <div className=" bg-[#141414] max-w-[1519px] mx-auto px-8 py-5 2xl:w-[50%] xl:w-[55%] lg:w-[60%] md:w-[80%] w-[90%] rounded-md border border-neutral-700/50">
       <div className="flex w-full flex-col gap-y-2 h-full">
         <NavigateRoutes />
         <h2 className="text-xl font-bold text-white mb-2 mt-4">Beat Info</h2>
@@ -149,7 +203,7 @@ const ReviewDetails = () => {
         <div className="flex justify-end my-2 pt-6 border-t border-neutral-700/50 ">
           <button
             onClick={() => {
-              router.replace("info");
+              router.replace("licenses");
             }}
             className="px-4 py-1 hover:bg-neutral-700 active:outline active:outline-[6px] active:outline-neutral-800 rounded-md mr-4 border border-neutral-700/50 bg-neutral-800"
           >

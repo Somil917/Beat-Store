@@ -30,20 +30,26 @@ import LikeCardItems from "./LikeCardItems";
 import ProfileCardItems from "./ProfileCardItems";
 import React from "react";
 import useSubscribeModal from "@/hooks/useSubscribeModal";
+import CartCardItems from "./CartCardItems";
+import useGetUserById from "@/hooks/useGetUserById";
+import useLoadAvatarImage from "@/hooks/useLoadAvatarImage";
+import Image from "next/image";
+import { useDraftStore } from "@/hooks/useDraftStore";
 
 // interface NavbarProps {
 //   children: React.ReactNode;
 // }
 
 interface NavbarProps {
-  beats: Beat[];
+  cartItems: any[];
   href?: string;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
+const Navbar: React.FC<NavbarProps> = ({ href, cartItems }) => {
   const [value, setValue] = useState<string>("");
   const [isCard, setIsCard] = useState<boolean>(false);
   const [isProfileCard, setIsProfileCard] = useState<boolean>(false);
+  const [isCartCard, setIsCartCard] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -52,6 +58,10 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
   const pathname = usePathname();
 
   const { user, subscription } = useUser();
+  const { isLoading, userDetails } = useGetUserById(user?.id);
+  const avatarImg = useLoadAvatarImage(userDetails!);
+
+  const { clearDraft } = useDraftStore();
 
   const uploadModal = useUploadModal();
 
@@ -61,6 +71,7 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
     "/content/tracks/new/info",
     "/content/tracks/new/files",
     "/content/tracks/new/review",
+    "/content/tracks/new/licenses",
     "/content/tracks/uploaded",
   ];
 
@@ -69,14 +80,15 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
   // handel upload
   const onClick = () => {
     if (!user) {
-      return authModal.onOpen();
+      return authModal.onOpen("sign_in");
     }
 
     if (!subscription) {
       return subscribeModal.onOpen();
     }
 
-    return uploadModal.onOpen();
+    clearDraft();
+    router.push("/content/tracks/new/files");
   };
 
   const toggleCard = () => {
@@ -84,6 +96,10 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
   };
   const toggleProfileCard = () => {
     setIsProfileCard(!isProfileCard);
+  };
+
+  const toggleCartCard = () => {
+    setIsCartCard(!isCartCard);
   };
 
   const handleSearch = () => {
@@ -104,6 +120,7 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
   useEffect(() => {
     setIsProfileCard(false);
     setIsCard(false);
+    setIsCartCard(false);
   }, [pathname]);
 
   return (
@@ -181,7 +198,6 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
             <div className="flex justify-between items-center 2xl:text-sm text-xs md:gap-x-1 gap-x-2.5 2xl:gap-3 text-neutral-400 font-medium">
               {!shouldNotShow && (
                 <button
-                  // href={"/content/tracks/new/files"}
                   onClick={onClick}
                   className="hidden md:block rounded-sm mr-1 lg:mr-4 xl:mr-4 2xl:mr-5 md:mr-4 font-bold px-3 py-1 text-gray-700 hover:text-gray-950 bg-slate-200 transition hover:bg-slate-100"
                 >
@@ -190,32 +206,59 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
               )}
               <div className="relative">
                 <button
-                  className="flex justify-center items-center cursor-pointer gap-1 hover:bg-neutral-400/10 p-2 rounded-full"
+                  className={`flex justify-center items-center overflow-hidden ${
+                    isProfileCard && "bg-neutral-400/10"
+                  } cursor-pointer gap-1 hover:bg-neutral-400/10 p-2 rounded-full`}
                   onClick={toggleProfileCard}
                 >
-                  <CgProfile size={24} />
-                  <IoIosArrowDown className="hidden lg:block 2xl:block" />
+                  <div className="w-6 h-6 relative aspect-square overflow-hidden rounded-full ">
+                    {avatarImg ? (
+                      <Image
+                        src={avatarImg}
+                        alt="avatar"
+                        fill
+                        className="rounded-full absolute object-cover"
+                      />
+                    ) : (
+                      <CgProfile size={24} />
+                    )}
+                  </div>
+                  <IoIosArrowDown
+                    className={`hidden ${
+                      isProfileCard && " rotate-180"
+                    } transition lg:block 2xl:block`}
+                  />
                 </button>
                 {isProfileCard && (
                   <Card
+                    setIsCardOpen={setIsProfileCard}
                     className={`${
                       !shouldNotShow
                         ? "right-[0px] top-[100%]"
                         : "right-[0px] top-[100%]"
                     } md:w-[180px] w-[140px] h-[300px] md:h-[360px] absolute`}
                   >
-                    <ProfileCardItems />
+                    <ProfileCardItems
+                      userDetails={userDetails!}
+                      avatarUrl={avatarImg!}
+                    />
                   </Card>
                 )}
               </div>
               {!shouldNotShow && (
                 <div className="relative">
                   <button
-                    className=" hidden 2xl:flex lg:flex xl:flex justify-center items-center gap-1 hover:bg-neutral-400/10 p-2 rounded-full cursor-pointer"
+                    className={`hidden 2xl:flex lg:flex xl:flex ${
+                      isCard && "bg-neutral-400/10"
+                    } justify-center items-center gap-1 hover:bg-neutral-400/10 p-2 rounded-full cursor-pointer`}
                     onClick={toggleCard}
                   >
                     <LuHeart size={22} />
-                    <IoIosArrowDown className="hidden lg:block 2xl:block" />
+                    <IoIosArrowDown
+                      className={`hidden ${
+                        isCard && " rotate-180"
+                      } transition lg:block 2xl:block`}
+                    />
                   </button>
                   <Link
                     className="xl:hidden 2xl:hidden lg:hidden flex justify-center items-center gap-1 hover:bg-neutral-400/10 p-2 rounded-full cursor-pointer"
@@ -225,17 +268,59 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
                     <IoIosArrowDown className="hidden lg:block 2xl:block" />
                   </Link>
                   {isCard && (
-                    <Card className="absolute top-[100%] right-0">
-                      <LikeCardItems beats={beats} />
+                    <Card
+                      setIsCardOpen={setIsCard}
+                      className="absolute top-[100%] right-0"
+                    >
+                      <LikeCardItems />
                     </Card>
                   )}
                 </div>
               )}
               {!shouldNotShow && (
-                <button className="flex justify-center items-center gap-1 hover:bg-neutral-400/10 p-2 rounded-full cursor-pointer">
-                  <HiOutlineShoppingBag size={22} />
-                  <IoIosArrowDown className="hidden lg:block 2xl:block" />
-                </button>
+                <div className="relative">
+                  <button
+                    className={`sm:flex hidden justify-center ${
+                      isCartCard && "bg-neutral-400/10"
+                    } items-center gap-1 hover:bg-neutral-400/10 p-2 rounded-full cursor-pointer`}
+                    onClick={toggleCartCard}
+                  >
+                    <div className="relative">
+                      <HiOutlineShoppingBag size={22} />
+                      {cartItems.length > 0 && (
+                        <span className="absolute w-4 h-4 flex -top-1 -right-1 justify-center items-center bg-yellow-400 text-black rounded-full ">
+                          {cartItems.length}
+                        </span>
+                      )}
+                    </div>
+                    <IoIosArrowDown
+                      className={`hidden ${
+                        isCartCard && " rotate-180"
+                      } transition lg:block 2xl:block`}
+                    />
+                  </button>
+                  <Link
+                    className="sm:hidden flex justify-center items-center gap-1 hover:bg-neutral-400/10 p-2 rounded-full cursor-pointer"
+                    href="/cart-checkout"
+                  >
+                    <div className="relative">
+                      <HiOutlineShoppingBag size={22} />
+                      {cartItems.length > 0 && (
+                        <span className="absolute w-4 h-4 flex -top-1 -right-1 justify-center items-center bg-yellow-400 text-black rounded-full ">
+                          {cartItems.length}
+                        </span>
+                      )}
+                    </div>
+                  </Link>
+                  {isCartCard && (
+                    <Card
+                      setIsCardOpen={setIsCartCard}
+                      className="absolute top-[100%] p-5 h-auto min-h-28 w-[420px] right-0"
+                    >
+                      <CartCardItems cartItems={cartItems} />
+                    </Card>
+                  )}
+                </div>
               )}
               <button className="flex justify-center items-center gap-1 hover:bg-neutral-400/10 p-2 rounded-full cursor-pointer">
                 <RiNotification3Line size={21} />
@@ -247,20 +332,26 @@ const Navbar: React.FC<NavbarProps> = ({ href, beats }) => {
           <>
             <div className="flex justify-between items-center text-sm gap-6 text-neutral-400 font-medium">
               <button
-                onClick={authModal.onOpen}
+                onClick={() => {
+                  authModal.onOpen("sign_up");
+                }}
                 className="hover:text-neutral-300 transition"
               >
                 SignUp
               </button>
               <span className=" after:content-['|']"></span>
               <button
-                onClick={authModal.onOpen}
+                onClick={() => {
+                  authModal.onOpen("sign_in");
+                }}
                 className="hover:text-neutral-300 transition"
               >
                 SignIn
               </button>
               <button
-                onClick={authModal.onOpen}
+                onClick={() => {
+                  authModal.onOpen("sign_in");
+                }}
                 className="hidden md:block rounded-sm mx-3 font-bold px-3 py-1 text-gray-700 hover:text-gray-950 bg-slate-200 transition hover:bg-slate-100"
               >
                 Sell Here

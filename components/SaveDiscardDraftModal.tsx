@@ -1,6 +1,8 @@
 "use client";
 
 import { useDraftStore } from "@/hooks/useDraftStore";
+import useProtectUploadRoute from "@/hooks/useProtectUploadRoute";
+import useProtectRoutes from "@/hooks/useProtectUploadRoute";
 import useSaveDiscardDraftModal from "@/hooks/useSaveDiscardDraftModal";
 import { useUser } from "@/hooks/useUser";
 import { useFormContext } from "@/providers/FormProvider";
@@ -17,7 +19,7 @@ const SaveDiscardDraftModal = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const supabase = useSupabaseClient();
-  const { draftId } = useDraftStore();
+  const { draftId, clearDraft } = useDraftStore();
   const router = useRouter();
   const { user } = useUser();
 
@@ -33,7 +35,7 @@ const SaveDiscardDraftModal = () => {
           metadata: formData.beatinfo,
           is_saved: true,
         })
-        .eq("id", draftId)
+        .eq("id", draftId);
 
       if (saveError) {
         setIsSaving(false);
@@ -41,9 +43,9 @@ const SaveDiscardDraftModal = () => {
       }
 
       setIsSaving(false);
+      router.refresh();
       toast.success("Draft saved successfully");
       router.replace("/content/tracks/uploaded");
-      router.refresh();
       onClose();
     } catch (error) {
       toast.error("Failed saving draft");
@@ -71,7 +73,6 @@ const SaveDiscardDraftModal = () => {
       }
 
       setIsDeleting(false);
-      router.refresh();
       toast.success("Draft Deleted successfully");
       router.replace("/content/tracks/uploaded");
       onClose();

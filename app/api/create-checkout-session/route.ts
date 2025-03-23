@@ -5,9 +5,17 @@ import { NextResponse } from "next/server";
 import { stripe } from "@/libs/stripe";
 import { getURL } from "@/libs/helpers";
 import { createOrRetrieveCustomer } from "@/libs/supabaseAdmin";
+import { stringify } from "querystring";
 
 export async function POST(request: Request) {
-  const { price, beat, quantity = 1, metadata = {}, purchaseType } = await request.json();
+  const {
+    price,
+    beat,
+    licenses,
+    quantity = 1,
+    metadata = {},
+    purchaseType,
+  } = await request.json();
 
   try {
     const supabase = createRouteHandlerClient({
@@ -51,49 +59,46 @@ export async function POST(request: Request) {
         cancel_url: `${getURL()}`,
       });
     } else if (purchaseType === "beat_purchase") {
-      // One-time beat purchase flow
-      // const product = await stripe.products.create({
-      //   name: beat.title, // Name of the beat
-      //   description: beat.author,
-      // });
-    
-      // const beatPrice = await stripe.prices.create({
-      //   unit_amount: beat.bpm * 100, // Price in cents, e.g., $50.00
-      //   currency: "usd",
-      //   product: product.id, // Associate with the created product
-      // });
+      // const { beatId, license_type, beatPrice } = metadata;
 
-      const { beatId, licenseType = "Basic MP3" } = metadata;
+      // if (!beatId) {
+      //   return new NextResponse("Missing beat ID in metadata", { status: 400 });
+      // }
 
-      if (!beatId) {
-        return new NextResponse("Missing beat ID in metadata", { status: 400 });
+      if (!Array.isArray(licenses) || licenses.length === 0) {
+        return new NextResponse("Invalid licenses data", { status: 400 });
       }
+
+      const line_items = licenses.map((license) => ({
+        price_data: {
+          currency: "usd",
+          product_data: {
+            description: `License: ${license.license_type}`,
+            name: license.title,
+          },
+          unit_amount: license.price * 100, // Price in cents, e.g., $50
+        }, // Price ID for the beat
+        quantity,
+      }));
 
       session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         billing_address_collection: "required",
         customer,
-        line_items: [
-          {
-            price_data: {
-              currency: "usd",
-              product_data: {
-                description: `License: ${licenseType}`,
-                name: beat.title
-              },
-              unit_amount: beat.bpm * 100, // Price in cents, e.g., $50
-            }, // Price ID for the beat
-            quantity,
-          },
-        ],
+        line_items,
         mode: "payment", // One-time payment
         metadata: {
-          beatId,
-          licenseType,
+          licenses: JSON.stringify(
+            licenses.map(({ beat_id, license_type, price }) => ({
+              beatId: beat_id,
+              license_type,
+              beatPrice: price,
+            }))
+          ), // Store as a JSON string
           userId: user.id,
         },
         success_url: `${getURL()}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${getURL()}/beats/${beatId}`,
+        cancel_url: `${getURL()}/cart-checkout`,
       });
     } else {
       return new NextResponse("Invalid purchase type", { status: 400 });

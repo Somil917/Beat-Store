@@ -21,9 +21,11 @@ const SearchContent: React.FC<SearchContentProps> = ({ beats }) => {
         md:block
         min-h-screen
         bg-[#090909]
+        max-w-[1519px] 
+        m-auto
         2xl:py-16
         py-20
-        2xl:px-28
+        2xl:px-20
         md:px-10 
         lg:px-10 
         xl:px-20

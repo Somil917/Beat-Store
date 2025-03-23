@@ -53,7 +53,7 @@ const Beat = () => {
 
         const data = await fetchBeat(beatId);
         if (data) {
-          console.log("Fetched beat details successfully:", data);
+          // console.log("Fetched beat details successfully:", data);
           setBeatDetails(data);
         } else {
           console.error("Failed to fetch beat details for ID:", beatId);
@@ -70,11 +70,11 @@ const Beat = () => {
 
   return (
     <>
-      <div className="w-full min-h-screen bg-[#090909] p-4 md:px-20 flex flex-col md:flex-row justify-between items-center md:items-start py-28">
+      <div className="w-full min-h-screen max-w-[1519px] m-auto bg-[#090909] p-4 md:px-20 flex flex-col md:flex-row justify-between items-center md:items-start py-28">
         <BeatDetails beat={beatDetails} />
         <div className="md:w-[74%] w-full px-4 md:px-0 flex flex-col gap-y-7">
           <PlayBeatWithGraph beat={beatDetails} />
-          <BeatLicensing />
+          <BeatLicensing beat={beatDetails} />
         </div>
       </div>
     </>

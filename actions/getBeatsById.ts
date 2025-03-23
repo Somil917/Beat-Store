@@ -11,7 +11,7 @@ const getBeatsById = async (): Promise<Beat[]> => {
 
     const { data, error } = await supabase
         .from('beats')
-        .select('*')
+        .select('*, licenses(price)')
         .eq('user_id', session?.user?.id)
         .order('created_at', { ascending: false });
 

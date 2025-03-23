@@ -7,7 +7,7 @@ import uniqid from "uniqid";
 import { IoMdClose } from "react-icons/io";
 import { IoCloseOutline, IoCloudUploadOutline } from "react-icons/io5";
 import { useUser } from "@/hooks/useUser";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   useSessionContext,
   useSupabaseClient,
@@ -58,38 +58,45 @@ const TrackDetailsUploadModal: React.FC<TrackDetailsUploadModalProps> = ({
     audioFile,
   } = useDraftStore();
 
+  const hasCreatedDraft = useRef(false);
+
   //create draft if not existing
+  const [isCreatingDraft, setIsCreatingDraft] = useState(false);
+
   const createDraft = useCallback(async () => {
-    if (!user || draftId) return draftId;
+    if (!user || draftId || isCreatingDraft) return draftId;
 
-    const { data: draftData, error } = await supabaseClient
-      .from("drafts")
-      .insert({ user_id: user.id, is_saved: false, is_published: false })
-      .select("id")
-      .single();
+    setIsCreatingDraft(true);
+    try {
+      const { data: draftData, error } = await supabaseClient
+        .from("drafts")
+        .insert({ user_id: user.id, is_saved: false, is_published: false })
+        .select("id")
+        .single();
 
-    console.log("Draft creation response", draftData);
+      if (error) {
+        return toast.error("Failed to create draft");
+      }
 
-    if (error) {
-      return toast.error("Failed to create draft");
-    }
-
-    if (draftData && draftData.id) {
-      setDraftId(draftData.id);
-      console.log("Draft ID successfully set:", draftData.id);
-      return draftData.id;
-    } else {
-      console.log("Draft id is missing in the response", draftData);
+      if (draftData && draftData.id) {
+        setDraftId(draftData.id);
+        return draftData.id;
+      }
+    } catch (error) {
+      toast.error("Failed to create draft");
+    } finally {
+      setIsCreatingDraft(false);
     }
 
     return null;
-  }, [draftId, setDraftId, supabaseClient, user]);
+  }, [draftId, setDraftId, supabaseClient, user, isCreatingDraft]);
 
   //Fetch unsaved draftid on each reload
-  useEffect(() => {
-    const fetchDraft = async () => {
-      if (!user || draftId) return;
 
+  useEffect(() => {
+    if (!user || draftId || hasCreatedDraft.current) return;
+
+    const fetchDraft = async () => {
       const { data: unsavedDraft, error } = await supabaseClient
         .from("drafts")
         .select("id")
@@ -111,6 +118,7 @@ const TrackDetailsUploadModal: React.FC<TrackDetailsUploadModalProps> = ({
     };
 
     fetchDraft();
+    hasCreatedDraft.current = true;
   }, [user, supabaseClient, createDraft, setDraftId, draftId]);
 
   //Handle file upload

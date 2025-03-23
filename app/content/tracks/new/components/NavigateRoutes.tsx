@@ -19,6 +19,11 @@ const NavigateRoutes = () => {
         href: "/content/tracks/new/info",
       },
       {
+        label: "Beat Licenses",
+        active: pathname === "/content/tracks/new/licenses",
+        href: "/content/tracks/new/licenses",
+      },
+      {
         label: "Review",
         active: pathname === "/content/tracks/new/review",
         href: "/content/tracks/new/review",
@@ -39,7 +44,7 @@ const NavigateRoutes = () => {
                 : "text-white"
             }`}
             onClick={() => {
-              router.push(item.href);
+              router.replace(item.href);
             }}
           >
             <div>{item.label}</div>

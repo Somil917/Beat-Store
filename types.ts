@@ -25,6 +25,8 @@ export interface Beat {
   created_at: string;
   tags: string[];
   genres: string[];
+  licenses?: any[];
+  licensePrice: number; 
 }
 
 export interface Draft {
@@ -36,6 +38,14 @@ export interface Draft {
   audio_file_url: string;
   is_published: boolean;
   is_saved: boolean;
+}
+
+export interface license{
+  id:string;
+  beat_id: string;
+  license_type: string;
+  price: number;
+  policies: any;
 }
 
 export interface Product {

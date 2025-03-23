@@ -6,15 +6,14 @@ import React from "react";
 
 export const revalidate = 0;
 
-const Liked = async () => {
-    const beats = await getLikedBeats();
+const Liked = () => {
 
-    return (
-        <>
-            {/* <Navbar href="liked" /> */}
-            <LikedContent beats={beats} />
-        </>
-     );
-}
- 
+  return (
+    <>
+      {/* <Navbar href="liked" /> */}
+      <LikedContent />
+    </>
+  );
+};
+
 export default Liked;

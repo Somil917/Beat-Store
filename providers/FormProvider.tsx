@@ -22,11 +22,25 @@ interface Files {
   zip?: File | null;
 }
 
+interface Policies {
+  NumberOfDistributionCopiesAllowed: number;
+  NumberOfAudioStreamsAllowed: number;
+  NumberOfAudioDownloadsAllowed: number;
+  NumberOfVideoStreamsAllowed: number;
+}
+
+interface Pricing {
+  isApplied: boolean;
+  license_type: string;
+  price: number;
+  policies: Policies;
+}
+
 interface FormData {
   files: Files;
   beatinfo: BeatInfo;
   metadata: Record<string, unknown>;
-  pricing: Record<string, unknown>;
+  pricing: Pricing[];
 }
 
 const defaultFormData: FormData = {
@@ -44,7 +58,41 @@ const defaultFormData: FormData = {
     genres: [],
   },
   metadata: {},
-  pricing: {},
+  pricing: [
+    {
+      isApplied: true,
+      license_type: "Basic License",
+      price: 29,
+      policies: {
+        NumberOfDistributionCopiesAllowed: 2000,
+        NumberOfAudioStreamsAllowed: 15000,
+        NumberOfAudioDownloadsAllowed: 1000,
+        NumberOfVideoStreamsAllowed: 5000,
+      },
+    },
+    {
+      isApplied: true,
+      license_type: "Premium License",
+      price: 40,
+      policies: {
+        NumberOfDistributionCopiesAllowed: 5000,
+        NumberOfAudioStreamsAllowed: 30000,
+        NumberOfAudioDownloadsAllowed: 3000,
+        NumberOfVideoStreamsAllowed: 10000,
+      },
+    },
+    {
+      isApplied: true,
+      license_type: "Premium + Trackouts",
+      price: 90,
+      policies: {
+        NumberOfDistributionCopiesAllowed: 10000,
+        NumberOfAudioStreamsAllowed: 100000,
+        NumberOfAudioDownloadsAllowed: 5000,
+        NumberOfVideoStreamsAllowed: 50000,
+      },
+    },
+  ],
 };
 
 // Define the type for the form data and the update function
@@ -68,7 +116,6 @@ export const useFormContext = () => {
 };
 
 export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
-
   const [formData, setFormData] = useState<FormData>(defaultFormData);
 
   const updateFormData = <T extends keyof FormData>(

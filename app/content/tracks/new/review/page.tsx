@@ -9,8 +9,8 @@ const Review = () => {
       <SaveDiscardDraftModal />
       <CancelTrack/>
       <div className="scrollbar-no-arrows w-full overflow-y-auto h-full max-h-[calc(100vh-65px)] bg-[#090909] flex flex-col items-center pb-32 pt-16">
-        <div className="text-xl mb-4 text-start 2xl:w-[50%] xl:w-[55%] lg:w-[60%] md:w-[80%] w-[90%]">
-          Review<span className="text-lg text-neutral-400"> - Step 3 of 3</span>
+        <div className="text-xl max-w-[1519px] mx-auto mb-4 text-start 2xl:w-[50%] xl:w-[55%] lg:w-[60%] md:w-[80%] w-[90%]">
+          Review<span className="text-lg text-neutral-400"> - Step 4 of 4</span>
         </div>
         <ReviewDetails />
       </div>

@@ -1,11 +1,9 @@
 import { Beat } from "@/types";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClientComponentClient, createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 
 const getLikedBeats = async (): Promise<Beat[]> => {
-  const supabase = createServerComponentClient({
-    cookies: cookies,
-  });
+  const supabase = createClientComponentClient();
 
   const {
     data: { user },
@@ -24,7 +22,7 @@ const getLikedBeats = async (): Promise<Beat[]> => {
 
   const { data, error } = await supabase
     .from("liked_beats")
-    .select("*, beats(*)")
+    .select("beats(*, licenses(price))")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
@@ -37,7 +35,7 @@ const getLikedBeats = async (): Promise<Beat[]> => {
     return [];
   }
 
-  return data.map((item) => ({
+  return data.map((item: any) => ({
     ...item.beats,
   }));
 };

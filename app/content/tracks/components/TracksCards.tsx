@@ -1,6 +1,7 @@
 "use client";
 
 import Card from "@/components/Card";
+import { useDraftStore } from "@/hooks/useDraftStore";
 import useGetUserById from "@/hooks/useGetUserById";
 import useLoadAvatarImage from "@/hooks/useLoadAvatarImage";
 import useLoadDraftImage from "@/hooks/useLoadDraftImage";
@@ -33,6 +34,7 @@ const TracksCards: React.FC<TracksCardsProps> = ({ track }) => {
   const [isCard, setIsCard] = useState<boolean>(false);
   const { formData, updateFormData } = useFormContext();
   const router = useRouter();
+  const { clearDraft, draftId } = useDraftStore();
 
   const toggleCard = () => {
     setIsCard(!isCard);
@@ -53,6 +55,11 @@ const TracksCards: React.FC<TracksCardsProps> = ({ track }) => {
   };
 
   const handleEditClick = async () => {
+
+    if(draftId){
+      clearDraft();
+    }
+
     // Try to update the draft status
     const { error } = await supabase
       .from("drafts")
@@ -86,7 +93,7 @@ const TracksCards: React.FC<TracksCardsProps> = ({ track }) => {
 
   return (
     <div className="flex border overflow-hidden border-neutral-700/50 flex-col gap-y-5 bg-[#141414] p-1 rounded-md">
-      <div className="max-w-[220px] 2xl:w-[220px] xl:w-[190px] relative overflow-hidden aspect-square rounded-md">
+      <div className=" bg-slate-300 2xl:w-full relative overflow-hidden aspect-square rounded-md">
         <Image
           fill
           className="object-cover rounded-md"

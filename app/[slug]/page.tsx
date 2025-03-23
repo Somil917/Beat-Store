@@ -58,7 +58,7 @@ const UserChannel = () => {
       setLoading(true);
       const { data: beats, error } = await supabaseClient
         .from("beats")
-        .select("*")
+        .select("*, licenses(price)")
         .eq("user_id", user_id)
         .order("created_at", { ascending: false });
 
@@ -119,7 +119,7 @@ const UserChannel = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#090909] p-4 md:px-20 flex flex-col md:flex-row justify-between py-28">
+    <div className="w-full min-h-screen mt-4 max-w-[1519px] m-auto bg-[#090909] p-4 md:px-20 flex flex-col md:flex-row justify-between py-28">
       <AboutUser user={user!} />
       {beats && (
         <div className=" min-h-[440px] md:w-[73%] w-full rounded-md">

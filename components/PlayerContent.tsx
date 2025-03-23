@@ -237,7 +237,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
                 "
         >
           <MediaItem className="p-0" data={beat} />
-          <LikeButton beatId={beat.id} />
+          <LikeButton beat={beat} beatId={beat.id} />
         </div>
       </div>
       <div

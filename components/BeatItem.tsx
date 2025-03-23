@@ -2,59 +2,85 @@
 
 import useLoadImage from "@/hooks/useLoadImage";
 import { Beat } from "@/types";
-import qs from "query-string";
 import Image from "next/image";
-import { FaPlay, FaRegPlayCircle } from "react-icons/fa";
 import PlayBtn from "./PlayBtn";
 import LikeButton from "./LikeButton";
-import useOnPlay from "@/hooks/useOnPlay";
-import { BsPauseBtn } from "react-icons/bs";
 import { twMerge } from "tailwind-merge";
 import { useRouter } from "next/navigation";
 import useGetUserById from "@/hooks/useGetUserById";
-import { useEffect } from "react";
 import BeatPurchaseBtn from "./BeatPurchaseBtn";
 import useLoadBeatUrl from "@/hooks/useLoadBeatUrl";
 import { useUser } from "@/hooks/useUser";
 import useGetPurchasedBeats from "@/hooks/useGetPurchasedBeats";
-import { FiDownload } from "react-icons/fi";
-import { HiDownload } from "react-icons/hi";
-import { MdDownload } from "react-icons/md";
-import { RiDownload2Fill } from "react-icons/ri";
 import { IoMdDownload } from "react-icons/io";
+import { useEffect, useState } from "react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { error } from "console";
 
 interface BeatItemProps {
   data: Beat;
+  purchasedBeatsDetails: any[];
   className?: string;
   onClick: (id: string) => void;
 }
 
-const BeatItem: React.FC<BeatItemProps> = ({ data, className, onClick }) => {
+const BeatItem: React.FC<BeatItemProps> = ({
+  data,
+  purchasedBeatsDetails,
+  className,
+  onClick,
+}) => {
   const imagePath = useLoadImage(data);
   const router = useRouter();
-  const { user } = useUser();
-  const { purchasedBeatsDetails } = useGetPurchasedBeats(user?.id);
+  const supabase = useSupabaseClient();
+
+  // const [licensePrice, setLicensePrice] = useState<number>(0);
 
   const beatUrl = useLoadBeatUrl(data);
-
-  const { isLoading, userDetails } = useGetUserById(data.user_id);
+  // const { isLoading, userDetails } = useGetUserById(data.user_id);
 
   const beatTitleSlug = `${data.title
     .toLowerCase()
     .replace(/[^a-z0-9 ]/g, "")
     .replace(/\s+/g, "-")}-${data.id}`;
 
-  const usernameSlug = `${userDetails?.display_name}`;
+  const usernameSlug = `${data.author}`;
 
   const openBeat = () => {
     router.push(`/beat/${beatTitleSlug}`);
   };
 
   const openUserChannel = () => {
-    if (!isLoading && usernameSlug !== undefined) {
+    if (usernameSlug !== undefined) {
       router.push(`/${usernameSlug}`);
     }
   };
+
+  // useEffect(() => {
+  //   const fetchLicensePrice = async () => {
+  //     try {
+  //       const { data: licensePrice, error: licenseError } = await supabase
+  //         .from("licenses")
+  //         .select("price")
+  //         .eq("beat_id", data.id)
+  //         .order("price", { ascending: true });
+
+  //       if (licenseError) {
+  //         return console.log(licenseError.message);
+  //       }
+
+  //       if (!licensePrice) {
+  //         return console.log("no license price found");
+  //       }
+
+  //       setLicensePrice(licensePrice[0].price);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+
+  //   fetchLicensePrice();
+  // }, [data.id, supabase]);
 
   return (
     <div
@@ -165,6 +191,7 @@ const BeatItem: React.FC<BeatItemProps> = ({ data, className, onClick }) => {
                 "
         >
           <LikeButton
+            beat={data}
             className="md:opacity-0 transition w-full opacity-100 md:group-hover:opacity-100"
             beatId={data.id}
           />
@@ -209,7 +236,6 @@ const BeatItem: React.FC<BeatItemProps> = ({ data, className, onClick }) => {
           <BeatPurchaseBtn
             key={data.id}
             beatId={data.id}
-            beatPrice={data.bpm}
             beat={data}
           />
           {purchasedBeatsDetails.some((item) => item.beat_id === data.id) && (

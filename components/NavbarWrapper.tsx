@@ -5,18 +5,21 @@ import Navbar from "./Navbar";
 import { usePathname } from "next/navigation";
 
 interface NavBarWrapperProps {
-  beats: Beat[];
+  cartItems: any[];
 }
 
-const NavBarWrapper: React.FC<NavBarWrapperProps> = ({ beats }) => {
+const NavBarWrapper: React.FC<NavBarWrapperProps> = ({ cartItems }) => {
   const pathname = usePathname();
-  const noNavbarRoutes = [
-    "/auth/signup",
-    "/auth/signin",
-  ];
+  const noNavbarRoutes = ["/auth/signup", "/auth/signin"];
 
-  return <div className="
-              ">{!noNavbarRoutes.includes(pathname) && <Navbar beats={beats} />}</div>;
+  return (
+    <div
+      className="
+              "
+    >
+      {!noNavbarRoutes.includes(pathname) && <Navbar cartItems={cartItems} />}
+    </div>
+  );
 };
 
 export default NavBarWrapper;

@@ -2,21 +2,35 @@ import { Beat } from "@/types";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 
-const getBeats = async (): Promise<Beat[]> => {
-    const supabase = createServerComponentClient({
-        cookies: cookies
-    })
+const getBeats = async (limit: number, cursor?: string): Promise<Beat[]> => {
+  const supabase = createServerComponentClient({
+    cookies: cookies,
+  });
 
-    const { data, error } = await supabase
-        .from('beats')
-        .select('*')
-        .order('created_at', { ascending: false });
+  let query = supabase
+    .from("beats")
+    .select(`*, licenses(price)`)
+    .order("created_at", { ascending: false })
+    .limit(limit);
 
-    if(error){
-        console.log(error)
-    }
+  if (cursor) {
+    query = query.filter("created_at", "<", cursor);
+  }
 
-    return (data as any) || [];
-}
+  const { data, error } = await query;
+
+  if (error) {
+    console.log(error);
+  }
+
+  return (
+    (data as any)?.map((beat: any) => ({
+      ...beat,
+      licensePrice: beat.licenses?.length
+        ? Math.min(...beat.licenses.map((l: any) => l.price))
+        : null,
+    })) || []
+  );
+};
 
 export default getBeats;
