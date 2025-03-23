@@ -29,7 +29,7 @@ const AddToCartBtn: React.FC<AddToCartBtnProps> = ({
       if (onClose) {
         onClose();
       }
-      return authModal.onOpen();
+      return authModal.onOpen("sign_in");
     }
 
     if (!selectedLicense) {

@@ -4,28 +4,28 @@ import { cookies } from "next/headers";
 import getBeats from "./getBeats";
 
 const getBeatsByTitle = async (title: string): Promise<Beat[]> => {
-    const supabase = createServerComponentClient({
-        cookies: cookies
-    })
+  const supabase = createServerComponentClient({
+    cookies: cookies,
+  });
 
-    if(!title){
-        const allBeats = await getBeats();
-        return allBeats
-    }
-    
-    const getSession = supabase.auth.getSession();
+  if (!title) {
+    const allBeats = await getBeats(10);
+    return allBeats;
+  }
 
-    const { data, error } = await supabase
-        .from('beats')
-        .select('*')
-        .ilike('title', `%${title}%`)
-        .order('created_at', { ascending: false });
+  const getSession = supabase.auth.getSession();
 
-    if(error){
-        console.log(error)
-    }
+  const { data, error } = await supabase
+    .from("beats")
+    .select("*")
+    .ilike("title", `%${title}%`)
+    .order("created_at", { ascending: false });
 
-    return (data as any) || [];
-}
+  if (error) {
+    console.log(error);
+  }
+
+  return (data as any) || [];
+};
 
 export default getBeatsByTitle;

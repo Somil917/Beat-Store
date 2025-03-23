@@ -14,7 +14,7 @@ const Banners = () => {
 
   const onClick = () => {
     if (!user) {
-      return authModal.onOpen();
+      return authModal.onOpen("sign_in");
     }
 
     if (!subscription) {
